@@ -1,0 +1,13 @@
+﻿################################################################################
+# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
+################################################################################
+
+/President.Application/bin
+/President.Application/obj
+/President.UnitTests/bin
+/President.UnitTests/obj
+/.vs
+/President.Domain/bin
+/President.Domain/obj
+/President.Infrastructure/bin
+/President.Infrastructure/obj
