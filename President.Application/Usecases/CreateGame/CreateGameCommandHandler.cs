@@ -18,8 +18,8 @@
             if(await _gameRepository.GetByIdAsync(new GameId(command.GameId)) != null)
                 throw new GameAlreadyExistsException("A game with same id already exists");
 
-            var party = new Game(new GameId(command.GameId));
-            await _gameRepository.SaveAsync(party).ConfigureAwait(false);
+            var game = new Game(new GameId(command.GameId));
+            await _gameRepository.SaveAsync(game).ConfigureAwait(false);
         }
     }
 }

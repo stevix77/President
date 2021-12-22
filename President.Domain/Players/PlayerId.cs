@@ -8,5 +8,10 @@
         {
             _playerId = playerId;
         }
+
+        public override string ToString()
+        {
+            return _playerId;
+        }
     }
 }
