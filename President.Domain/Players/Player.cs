@@ -3,7 +3,7 @@
     using President.Domain.Games;
     using System;
 
-    public class Player
+    public class Player : Entity
     {
         private readonly PlayerId _playerId;
 
@@ -32,8 +32,7 @@
 
         public void StartGame(Game game)
         {
-            if (game.ContainsPlayer(this))
-                game.AcceptRequestFromPlayer(this);
+            game.AcceptRequestFromPlayer(this);
         }
     }
 }
