@@ -9,11 +9,9 @@
     {
         private readonly List<Player> _players;
 
-        public InMemoryPlayerRepository(Player player = null)
+        public InMemoryPlayerRepository(IEnumerable<Player> players = null)
         {
-            _players = new List<Player>();
-            if (player != null)
-                _players.Add(player);
+            _players = players?.ToList() ?? new List<Player>();
         }
 
         public Task<Player> GetByIdAsync(PlayerId playerId)
