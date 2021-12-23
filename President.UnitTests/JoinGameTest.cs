@@ -18,11 +18,15 @@
             var game = Game.FromState(new GameState("game1",
                                                     false,
                                                     Array.Empty<Player>(),
-                                                    new PlayerId[6]));
+                                                    Array.Empty<PlayerId>()));
+            var gameExpected = Game.FromState(new GameState("game1",
+                                                    false,
+                                                    new Player[] { new Player(new("player1")) },
+                                                    Array.Empty<PlayerId>()));
             await RunHandleWillAddPlayerToGame(new InMemoryGameRepository(game),
                                                new JoinGameCommand("player1", "game1"),
                                                new InMemoryPlayerRepository(new List<Player> { new Player(new PlayerId("player1")) }));
-            Assert.NotEmpty(game.Players);
+            Assert.Equal(gameExpected, game);
         }
 
         [Fact]
@@ -31,11 +35,15 @@
             var game = Game.FromState(new GameState("game1",
                                                     false,
                                                     Array.Empty<Player>(),
-                                                    new PlayerId[6]));
+                                                    Array.Empty<PlayerId>()));
+            var gameExpected = Game.FromState(new GameState("game1",
+                                                    false,
+                                                    Array.Empty<Player>(),
+                                                    Array.Empty<PlayerId>()));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game), 
                                                new InMemoryPlayerRepository(),
                                                new JoinGameCommand(null, "game1"));
-            Assert.Empty(game.Players);
+            Assert.Equal(gameExpected, game);
         }
 
         [Fact]
@@ -44,14 +52,18 @@
             var game = Game.FromState(new GameState("game1",
                                                     true,
                                                     Array.Empty<Player>(),
-                                                    new PlayerId[6]));
+                                                    Array.Empty<PlayerId>()));
+            var gameExpected = Game.FromState(new GameState("game1",
+                                                    true,
+                                                    Array.Empty<Player>(),
+                                                    Array.Empty<PlayerId>()));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(new List<Player> 
                                                { 
                                                    new Player(new PlayerId("player1")) 
                                                }),
                                                new JoinGameCommand("player1", "game1"));
-            Assert.Empty(game.Players);
+            Assert.Equal(gameExpected, game);
         }
 
         [Fact]
@@ -61,11 +73,15 @@
             var game = Game.FromState(new GameState("game1",
                                                     true,
                                                     players.ToArray(),
-                                                    new PlayerId[6]));
+                                                    Array.Empty<PlayerId>()));
+            var gameExpected = Game.FromState(new GameState("game1",
+                                                    true,
+                                                    players.ToArray(),
+                                                    Array.Empty<PlayerId>()));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(players),
                                                new JoinGameCommand("player1", "game1"));
-            Assert.DoesNotContain(game.Players, x => x.Equals(new Player(new PlayerId("player1"))));
+            Assert.Equal(gameExpected, game);
         }
 
         private static IEnumerable<Player> GeneratePlayers(int nbPlayers)
