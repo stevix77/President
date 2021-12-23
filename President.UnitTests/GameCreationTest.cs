@@ -29,7 +29,11 @@ namespace President.UnitTests
         [Fact]
         public async Task ShouldNotCreateGameWhenIdAlreadyExist()
         {
-            var gameRepository = new InMemoryGameRepository(Game.FromState(new GameState("game1", false, Array.Empty<Player>())));
+            var gameRepository = new InMemoryGameRepository(
+                                    Game.FromState(new GameState("game1",
+                                                                 false,
+                                                                 Array.Empty<Player>(),
+                                                                 new PlayerId[6])));
             await HandleWillNotCreateGame(new CreateGameCommand("game1"), gameRepository);
             Assert.Equal(1, gameRepository.CountGames());
         }
