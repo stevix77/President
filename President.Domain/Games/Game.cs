@@ -10,7 +10,7 @@ namespace President.Domain.Games
     public sealed class Game : Entity
     {
         private readonly GameId _gameId;
-        private readonly bool _hasBegan;
+        private bool _hasBegan;
         private readonly List<Player> _players;
         private readonly Dictionary<PlayerId, bool> _startRequests;
 
@@ -47,6 +47,13 @@ namespace President.Domain.Games
         public GameId GameId { get => _gameId; }
 
         internal bool HasBegan() => _hasBegan;
+
+        public void Start()
+        {
+            CheckRule(new GameMustHaveMoreTwoPlayersRule(_players.Count));
+            _hasBegan = true;
+        }
+
         internal void AcceptRequestFromPlayer(Player player)
         {
             CheckRule(new PlayerMustBeInGameRule(player, this));
@@ -80,10 +87,17 @@ namespace President.Domain.Games
 
         private bool Equals(Game game)
         {
-            return EqualityComparer<GameId>.Default.Equals(_gameId, game._gameId) &&
-                   _hasBegan == game._hasBegan &&
-                   Enumerable.SequenceEqual(_players, game._players) &&
-                   Enumerable.SequenceEqual(_startRequests, game._startRequests);
+            return GetHashCode() == game.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"{_gameId} - {_hasBegan} - {string.Join(",", _players)} - {string.Join(",", _startRequests)}";
+        }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
         }
     }
 }
