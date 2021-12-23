@@ -51,7 +51,18 @@ namespace President.Domain.Games
         public void Start()
         {
             CheckRule(new GameMustHaveMoreTwoPlayersRule(_players.Count));
-            _hasBegan = true;
+            if (HasAllPlayersRequestToStart() || IsFull())
+                _hasBegan = true;
+
+            bool HasAllPlayersRequestToStart()
+            {
+                return _startRequests.All(x => x.Value);
+            }
+
+            bool IsFull()
+            {
+                return _players.Count == 6;
+            }
         }
 
         internal void AcceptRequestFromPlayer(Player player)
