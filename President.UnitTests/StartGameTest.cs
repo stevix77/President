@@ -62,6 +62,18 @@
             Assert.Equal(gameExpected, game);
         }
 
+        [Fact]
+        public async Task GameCannotStartWhenAnyPlayerRequestsToStart()
+        {
+            var players = GeneratePlayers(3);
+            var game = Game.FromState(
+                            new GameState("g1", false, players, players.Take(2).Select(x => x.PlayerId).ToArray()));
+            var gameExpected = Game.FromState(
+                            new GameState("g1", false, players, players.Take(2).Select(x => x.PlayerId).ToArray()));
+            await HandleStartTheGame(new InMemoryGameRepository(game));
+            Assert.Equal(gameExpected, game);
+        }
+
         private async Task<Exception> HandleWillNotStartTheGame(InMemoryGameRepository gameRepository)
         {
             var handler = new StartGameCommandHandler(gameRepository);
