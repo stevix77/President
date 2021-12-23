@@ -1,12 +1,13 @@
-﻿using President.Domain.Games.Rules;
-using President.Domain.Players;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-
-namespace President.Domain.Games
+﻿namespace President.Domain.Games
 {
+    using President.Domain.Games.Events;
+    using President.Domain.Games.Rules;
+    using President.Domain.Players;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+
     public sealed class Game : Entity
     {
         private readonly GameId _gameId;
@@ -19,6 +20,7 @@ namespace President.Domain.Games
             _gameId = gameId;
             _players = new List<Player>();
             _startRequests = new Dictionary<PlayerId, bool>();
+            AddDomainEvent(new GameCreated(gameId));
         }
 
         private Game(GameId gameId,
@@ -52,7 +54,10 @@ namespace President.Domain.Games
         {
             CheckRule(new GameMustHaveMoreTwoPlayersRule(_players.Count));
             if (HasAllPlayersRequestToStart() || IsFull())
+            {
                 _hasBegan = true;
+                AddDomainEvent(new GameStarted(_gameId));
+            }
 
             bool HasAllPlayersRequestToStart()
             {
@@ -65,12 +70,11 @@ namespace President.Domain.Games
             }
         }
 
-        internal void AcceptRequestFromPlayer(Player player)
+        internal bool IsRequestFromPlayerAccepted(Player player)
         {
             CheckRule(new PlayerMustBeInGameRule(player, this));
             CheckRule(new GameMustBeNotStartedRule(this));
-            AcceptRequestWhenNotRequestedYet(player);
-
+            return AcceptRequestWhenNotRequestedYet(player);
         }
 
         internal bool ContainsPlayer(Player player)
@@ -85,10 +89,15 @@ namespace President.Domain.Games
             _startRequests.Add(player.PlayerId, false);
         }
 
-        private void AcceptRequestWhenNotRequestedYet(Player player)
+        private bool AcceptRequestWhenNotRequestedYet(Player player)
         {
             if (!_startRequests[player.PlayerId])
+            {
                 _startRequests[player.PlayerId] = true;
+                return true;
+            }
+            return false;
+            
         }
 
         public override bool Equals(object obj)

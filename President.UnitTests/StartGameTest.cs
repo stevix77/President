@@ -2,6 +2,7 @@
 {
     using President.Application.Usecases.StartGame;
     using President.Domain.Games;
+    using President.Domain.Games.Events;
     using President.Domain.Players;
     using President.Infrastructure.Repositories;
     using System;
@@ -29,6 +30,7 @@
                             new GameState("g1", true, players, Array.Empty<PlayerId>()));
             await HandleStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
+            Assert.Contains(game.DomainEvents, x => x.ToString() == new GameStarted(new("g1")).ToString());
         }
 
         [Fact]
@@ -41,6 +43,7 @@
                             new GameState("g1", false, players, Array.Empty<PlayerId>()));
             await HandleWillNotStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
+            Assert.Empty(game.DomainEvents);
         }
 
         [Fact]
@@ -60,6 +63,7 @@
                             new GameState("g1", true, players, players.Select(x => x.PlayerId).ToArray()));
             await HandleStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
+            Assert.Contains(game.DomainEvents, x => x.ToString() == new GameStarted(new("g1")).ToString());
         }
 
         [Fact]
@@ -72,6 +76,7 @@
                             new GameState("g1", false, players, players.Take(2).Select(x => x.PlayerId).ToArray()));
             await HandleStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
+            Assert.Empty(game.DomainEvents);
         }
 
         private async Task<Exception> HandleWillNotStartTheGame(InMemoryGameRepository gameRepository)
