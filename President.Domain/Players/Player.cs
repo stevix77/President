@@ -1,7 +1,7 @@
 ﻿namespace President.Domain.Players
 {
     using President.Domain.Games;
-    using System;
+    using President.Domain.Players.Events;
 
     public class Player : Entity
     {
@@ -17,11 +17,12 @@
         public void Join(Game game)
         {
             game.AddPlayer(this);
+            AddDomainEvent(new GameJoined(_playerId, game.GameId));
         }
 
         public override bool Equals(object obj)
         {
-            return this.ToString() == obj.ToString();
+            return ToString() == obj.ToString();
         }
 
         public override string ToString()
@@ -31,7 +32,8 @@
 
         public void RequestStartingGame(Game game)
         {
-            game.AcceptRequestFromPlayer(this);
+            if (game.IsRequestFromPlayerAccepted(this))
+                AddDomainEvent(new StartRequested(_playerId, game.GameId));
         }
     }
 }
