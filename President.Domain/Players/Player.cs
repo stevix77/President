@@ -18,8 +18,21 @@
         }
 
         public PlayerId PlayerId { get => _playerId; }
-        public object[] Cards { get => _cards.ToArray(); }
+        public int CountCards() 
+        {
+            return _cards.Count;    
+        }
 
+        internal void GetCard(object card)
+        {
+            _cards.Add(card);
+        }
+
+        public void RequestStartingGame(Game game)
+        {
+            if (game.IsRequestFromPlayerAccepted(this))
+                AddDomainEvent(new StartRequested(_playerId, game.GameId));
+        }
         public void Join(Game game)
         {
             game.AddPlayer(this);
@@ -34,17 +47,6 @@
         public override string ToString()
         {
             return _playerId.ToString();
-        }
-
-        public void RequestStartingGame(Game game)
-        {
-            if (game.IsRequestFromPlayerAccepted(this))
-                AddDomainEvent(new StartRequested(_playerId, game.GameId));
-        }
-
-        internal void GetCard(object card)
-        {
-            _cards.Add(card);
         }
     }
 }
