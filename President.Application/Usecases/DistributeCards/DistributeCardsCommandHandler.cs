@@ -1,27 +1,26 @@
-﻿using President.Domain.Games;
-using President.Domain.Players;
-using System;
-using System.Linq;
+﻿using President.Domain.Cards;
+using President.Domain.Games;
 using System.Threading.Tasks;
 
 namespace President.Application.Usecases.DistributeCards
 {
     public class DistributeCardsCommandHandler
     {
-        private readonly IGameRepository gameRepository;
-        private readonly IPlayerRepository playerRepository;
+        private readonly IGameRepository _gameRepository;
+        private readonly ICardRepository _cardRepository;
 
-        public DistributeCardsCommandHandler(IGameRepository gameRepository, IPlayerRepository playerRepository)
+        public DistributeCardsCommandHandler(IGameRepository gameRepository, ICardRepository cardRepository)
         {
-            this.gameRepository = gameRepository;
-            this.playerRepository = playerRepository;
+            _gameRepository = gameRepository;
+            _cardRepository = cardRepository;
         }
 
         public async Task Handle(DistributeCardsCommand command)
         {
-            var game = await gameRepository.GetByIdAsync(new GameId("g1"));
-            game.Distribute(Array.CreateInstance(typeof(object), 52).Cast<object>().ToArray());
-            await gameRepository.SaveAsync(game);
+            var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId));
+            var cards = await _cardRepository.GetCards().ConfigureAwait(false);
+            game.Distribute(cards);
+            await _gameRepository.SaveAsync(game);
         }
     }
 }
