@@ -46,6 +46,25 @@
                             gameState.StartingRequests);
         }
 
+        public void Distribute(object[] cards)
+        {
+            foreach(var card in cards)
+            {
+                GiveCard(card, GetPlayerWithLessCards());
+            }
+        }
+
+        private void GiveCard(object card, Player player)
+        {
+            player.GetCard(card);
+        }
+
+        private Player GetPlayerWithLessCards()
+        {
+            var min = _players.Min(x => x.Cards.Length);
+            return _players.FirstOrDefault(x => x.Cards.Length == min);
+        }
+
         public GameId GameId { get => _gameId; }
 
         internal bool HasBegan() => _hasBegan;
