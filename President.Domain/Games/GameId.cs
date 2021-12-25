@@ -7,11 +7,11 @@
     {
         private readonly string _value;
 
-        public GameId(string gameId)
+        public GameId(string partyId)
         {
-            if (string.IsNullOrEmpty(gameId))
+            if (string.IsNullOrEmpty(partyId))
                 throw new GameIdException("game id cannot be null");
-            _value = gameId;
+            _value = partyId;
         }
     }
 }
