@@ -1,14 +1,12 @@
-﻿using President.Domain.Games;
-
-namespace President.Application.Usecases.DistributeCards
+﻿namespace President.Application.Usecases.DistributeCards
 {
     public class DistributeCardsCommand
     {
-        public DistributeCardsCommand(string gameId)
-        {
-            GameId = gameId;
-        }
+        private readonly string v;
 
-        public string GameId { get; }
+        public DistributeCardsCommand(string v)
+        {
+            this.v = v;
+        }
     }
 }

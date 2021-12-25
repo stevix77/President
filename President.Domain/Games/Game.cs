@@ -1,6 +1,5 @@
 ﻿namespace President.Domain.Games
 {
-    using President.Domain.Cards;
     using President.Domain.Games.Events;
     using President.Domain.Games.Rules;
     using President.Domain.Players;
@@ -47,7 +46,7 @@
                             gameState.StartingRequests);
         }
 
-        public void Distribute(Card[] cards)
+        public void Distribute(object[] cards)
         {
             foreach(var card in cards)
             {
@@ -62,8 +61,8 @@
 
         private Player GetPlayerWithLessCards()
         {
-            var min = _players.Min(x => x.CountCards());
-            return _players.FirstOrDefault(x => x.CountCards() == min);
+            var min = _players.Min(x => x.Cards.Length);
+            return _players.FirstOrDefault(x => x.Cards.Length == min);
         }
 
         public GameId GameId { get => _gameId; }

@@ -77,18 +77,6 @@
             Assert.Empty(player.DomainEvents);
         }
 
-        [Fact]
-        public async Task PlayerCannotRequestStartingGameWhenHasAlreadyRequested()
-        {
-            var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId }));
-            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId }));
-            await HandleWillRejectRequest(new InMemoryGameRepository(game),
-                                        new InMemoryPlayerRepository(new List<Player> { player }));
-            Assert.Equal(gameExpected, game);
-            Assert.Empty(player.DomainEvents);
-        }
-
         private Task HandleWillAcceptRequest(InMemoryGameRepository gameRepository,
                                                     InMemoryPlayerRepository playerRepository)
         {
