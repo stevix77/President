@@ -15,10 +15,7 @@
         [Fact]
         public async Task PlayerShouldJoinTheGame()
         {
-            var game = Game.FromState(new GameState("game1",
-                                                    false,
-                                                    Array.Empty<Player>(),
-                                                    new PlayerId[6]));
+            var game = Game.FromState(new GameState("game1", false, Array.Empty<Player>()));
             await RunHandleWillAddPlayerToGame(new InMemoryGameRepository(game),
                                                new JoinGameCommand("player1", "game1"),
                                                new InMemoryPlayerRepository(new List<Player> { new Player(new PlayerId("player1")) }));
@@ -28,10 +25,7 @@
         [Fact]
         public async Task GameShouldNotAddPlayerUnknown()
         {
-            var game = Game.FromState(new GameState("game1",
-                                                    false,
-                                                    Array.Empty<Player>(),
-                                                    new PlayerId[6]));
+            var game = Game.FromState(new GameState("game1", false, Array.Empty<Player>()));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game), 
                                                new InMemoryPlayerRepository(),
                                                new JoinGameCommand(null, "game1"));
@@ -41,10 +35,7 @@
         [Fact]
         public async Task GameBeganCannotBeJoined()
         {
-            var game = Game.FromState(new GameState("game1",
-                                                    true,
-                                                    Array.Empty<Player>(),
-                                                    new PlayerId[6]));
+            var game = Game.FromState(new GameState("game1", true, Array.Empty<Player>()));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(new List<Player> 
                                                { 
@@ -58,10 +49,7 @@
         public async Task GameWith6playersCannotBeJoined()
         {
             var players = GeneratePlayers(6);
-            var game = Game.FromState(new GameState("game1",
-                                                    true,
-                                                    players.ToArray(),
-                                                    new PlayerId[6]));
+            var game = Game.FromState(new GameState("game1", true, players.ToArray()));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(players),
                                                new JoinGameCommand("player1", "game1"));

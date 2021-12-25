@@ -16,7 +16,8 @@
 
         public void Join(Game game)
         {
-            game.AddPlayer(this);
+            if(!game.HasBegan())
+                game.AddPlayer(this);
         }
 
         public override bool Equals(object obj)
@@ -29,7 +30,7 @@
             return _playerId.ToString();
         }
 
-        public void RequestStartingGame(Game game)
+        public void StartGame(Game game)
         {
             game.AcceptRequestFromPlayer(this);
         }
