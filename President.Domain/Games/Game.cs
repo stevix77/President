@@ -1,15 +1,14 @@
-﻿using President.Domain.Games.Rules;
-using President.Domain.Players;
+﻿using President.Domain.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace President.Domain.Games
 {
-    public class Game : Entity
+    public class Game
     {
         private readonly GameId _gameId;
-        private readonly bool _hasBegan;
+        private bool _hasBegan;
         private readonly List<Player> _players;
         private readonly Dictionary<PlayerId, bool> _startRequests;
 
@@ -30,7 +29,6 @@ namespace President.Domain.Games
 
         internal void AcceptRequestFromPlayer(Player player)
         {
-            CheckRule(new PlayerMustBeInGameRule(player, this));
             _startRequests[player.PlayerId] = true;
         }
 
