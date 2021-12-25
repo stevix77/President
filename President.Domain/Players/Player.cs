@@ -16,18 +16,7 @@
 
         public void Join(Game game)
         {
-            if(!game.HasBegan())
-                game.AddPlayer(this);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return this.ToString() == obj.ToString();
-        }
-
-        public override string ToString()
-        {
-            return _playerId.ToString();
+            game.AddPlayer(this);
         }
     }
 }
