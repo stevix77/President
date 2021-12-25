@@ -1,13 +1,12 @@
-﻿namespace President.Domain.Games
+﻿using President.Domain.Games.Rules;
+using President.Domain.Players;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace President.Domain.Games
 {
-    using President.Domain.Games.Events;
-    using President.Domain.Games.Rules;
-    using President.Domain.Players;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-
     public sealed class Game : Entity
     {
         private readonly GameId _gameId;
@@ -20,7 +19,6 @@
             _gameId = gameId;
             _players = new List<Player>();
             _startRequests = new Dictionary<PlayerId, bool>();
-            AddDomainEvent(new GameCreated(gameId));
         }
 
         private Game(GameId gameId,
@@ -54,10 +52,7 @@
         {
             CheckRule(new GameMustHaveMoreTwoPlayersRule(_players.Count));
             if (HasAllPlayersRequestToStart() || IsFull())
-            {
                 _hasBegan = true;
-                AddDomainEvent(new GameStarted(_gameId));
-            }
 
             bool HasAllPlayersRequestToStart()
             {
@@ -70,11 +65,12 @@
             }
         }
 
-        internal bool IsRequestFromPlayerAccepted(Player player)
+        internal void AcceptRequestFromPlayer(Player player)
         {
             CheckRule(new PlayerMustBeInGameRule(player, this));
             CheckRule(new GameMustBeNotStartedRule(this));
-            return AcceptRequestWhenNotRequestedYet(player);
+            AcceptRequestWhenNotRequestedYet(player);
+
         }
 
         internal bool ContainsPlayer(Player player)
@@ -89,15 +85,10 @@
             _startRequests.Add(player.PlayerId, false);
         }
 
-        private bool AcceptRequestWhenNotRequestedYet(Player player)
+        private void AcceptRequestWhenNotRequestedYet(Player player)
         {
             if (!_startRequests[player.PlayerId])
-            {
                 _startRequests[player.PlayerId] = true;
-                return true;
-            }
-            return false;
-            
         }
 
         public override bool Equals(object obj)

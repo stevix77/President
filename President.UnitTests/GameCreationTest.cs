@@ -1,6 +1,5 @@
 ﻿using President.Application.Usecases.CreateGame;
 using President.Domain.Games;
-using President.Domain.Games.Events;
 using President.Domain.Players;
 using President.Infrastructure.Repositories;
 using System;
@@ -14,15 +13,9 @@ namespace President.UnitTests
         [Fact]
         public async Task ShouldCreateGame()
         {
-            var expectedGame = Game.FromState(new GameState("game1",
-                                                            false,
-                                                            Array.Empty<Player>(),
-                                                            Array.Empty<PlayerId>()));
             var gameRepository = new InMemoryGameRepository();
             await HandleWillCreateGame(new CreateGameCommand("game1"), gameRepository);
-            Assert.Equal(expectedGame, gameRepository.GetGame("game1"));
-            Assert.Contains(gameRepository.GetGame("game1").DomainEvents, 
-                        x => x.ToString() == new GameCreated(new("game1")).ToString());
+            Assert.NotNull(gameRepository.GetGame("game1"));
         }
 
         [Fact]
@@ -36,14 +29,13 @@ namespace President.UnitTests
         [Fact]
         public async Task ShouldNotCreateGameWhenIdAlreadyExist()
         {
-            var expectedGame = Game.FromState(new GameState("game1", false, Array.Empty<Player>(), Array.Empty<PlayerId>()));
             var gameRepository = new InMemoryGameRepository(
                                     Game.FromState(new GameState("game1",
                                                                  false,
-                                                                 new Player[] { new Player(new("p1")) },
-                                                                 Array.Empty<PlayerId>())));
+                                                                 Array.Empty<Player>(),
+                                                                 new PlayerId[6])));
             await HandleWillNotCreateGame(new CreateGameCommand("game1"), gameRepository);
-            Assert.NotEqual(expectedGame, gameRepository.GetGame("game1"));
+            Assert.Equal(1, gameRepository.CountGames());
         }
 
         private static async Task HandleWillNotCreateGame(CreateGameCommand command, InMemoryGameRepository gameRepository)

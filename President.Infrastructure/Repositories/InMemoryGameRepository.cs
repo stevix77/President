@@ -25,6 +25,8 @@ namespace President.Infrastructure.Repositories
             return _games.Any() ? _games[0] : null;
         }
 
+        public int CountGames() => _games.Count;
+
         public Task<Game> GetByIdAsync(GameId gameId)
         {
             return Task.FromResult(_games.FirstOrDefault(x => x.GameId.Equals(gameId)));

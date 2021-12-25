@@ -3,7 +3,6 @@
     using President.Application.Usecases.JoinGame;
     using President.Domain.Games;
     using President.Domain.Players;
-    using President.Domain.Players.Events;
     using President.Infrastructure.Repositories;
     using System;
     using System.Collections.Generic;
@@ -16,21 +15,18 @@
         [Fact]
         public async Task PlayerShouldJoinTheGame()
         {
-            var player = new Player(new("player1"));
             var game = Game.FromState(new GameState("game1",
                                                     false,
                                                     Array.Empty<Player>(),
                                                     Array.Empty<PlayerId>()));
             var gameExpected = Game.FromState(new GameState("game1",
                                                     false,
-                                                    new Player[] { player },
+                                                    new Player[] { new Player(new("player1")) },
                                                     Array.Empty<PlayerId>()));
             await RunHandleWillAddPlayerToGame(new InMemoryGameRepository(game),
                                                new JoinGameCommand("player1", "game1"),
-                                               new InMemoryPlayerRepository(new List<Player> { player }));
+                                               new InMemoryPlayerRepository(new List<Player> { new Player(new PlayerId("player1")) }));
             Assert.Equal(gameExpected, game);
-            Assert.Contains(player.DomainEvents, x => x.ToString() == 
-                            new GameJoined(player.PlayerId, game.GameId).ToString());
         }
 
         [Fact]
@@ -61,22 +57,19 @@
                                                     true,
                                                     Array.Empty<Player>(),
                                                     Array.Empty<PlayerId>()));
-            var player = new Player(new PlayerId("player1"));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(new List<Player> 
                                                { 
-                                                   player
+                                                   new Player(new PlayerId("player1")) 
                                                }),
                                                new JoinGameCommand("player1", "game1"));
             Assert.Equal(gameExpected, game);
-            Assert.Empty(player.DomainEvents);
         }
 
         [Fact]
         public async Task GameWith6playersCannotBeJoined()
         {
-            var player = new Player(new("player1"));
-            var players = new List<Player>(GeneratePlayers(6)) { player };
+            var players = GeneratePlayers(6);
             var game = Game.FromState(new GameState("game1",
                                                     true,
                                                     players.ToArray(),
@@ -89,7 +82,6 @@
                                                new InMemoryPlayerRepository(players),
                                                new JoinGameCommand("player1", "game1"));
             Assert.Equal(gameExpected, game);
-            Assert.Empty(player.DomainEvents);
         }
 
         private static IEnumerable<Player> GeneratePlayers(int nbPlayers)

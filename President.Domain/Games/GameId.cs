@@ -1,6 +1,6 @@
 ﻿namespace President.Domain.Games
 {
-    using President.Domain.Exceptions;
+    using President.Domain.Games.Exceptions;
 
 
     public struct GameId
@@ -10,7 +10,7 @@
         public GameId(string gameId)
         {
             if (string.IsNullOrEmpty(gameId))
-                throw new DomainException("game id cannot be null");
+                throw new GameIdException("game id cannot be null");
             _value = gameId;
         }
 
