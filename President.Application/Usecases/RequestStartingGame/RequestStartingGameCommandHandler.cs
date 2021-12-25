@@ -18,12 +18,11 @@
 
         public async Task Handle(RequestStartingGameCommand command)
         {
-            var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId)).ConfigureAwait(false)
+            var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId))
                             ?? throw new ApplicationException($"Game {command.GameId} is unknown");
-            var player = await _playerRepository.GetByIdAsync(new PlayerId(command.PlayerId)).ConfigureAwait(false)
+            var player = await _playerRepository.GetByIdAsync(new PlayerId(command.PlayerId))
                             ?? throw new ApplicationException($"Player {command.PlayerId} is unknown");
             player.RequestStartingGame(game);
-            await _gameRepository.SaveAsync(game).ConfigureAwait(false);
         }
     }
 }

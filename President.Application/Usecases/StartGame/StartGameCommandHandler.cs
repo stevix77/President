@@ -16,9 +16,8 @@
         public async Task Handle(StartGameCommand command)
         {
             var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId))
-                            ?? throw new ApplicationException($"Game {command.GameId} is unknown");
+                            ?? throw new Application.ApplicationException($"Game {command.GameId} is unknown");
             game.Start();
-            await _gameRepository.SaveAsync(game).ConfigureAwait(false);
         }
     }
 }
