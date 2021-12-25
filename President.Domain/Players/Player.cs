@@ -1,7 +1,7 @@
 ﻿namespace President.Domain.Players
 {
     using President.Domain.Games;
-    using System;
+
 
     public class Player
     {
@@ -28,12 +28,6 @@
         public override string ToString()
         {
             return _playerId.ToString();
-        }
-
-        public void StartGame(Game game)
-        {
-            if (game.ContainsPlayer(this))
-                game.AcceptRequestFromPlayer(this);
         }
     }
 }
