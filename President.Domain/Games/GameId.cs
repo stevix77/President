@@ -13,10 +13,5 @@
                 throw new GameIdException("game id cannot be null");
             _value = gameId;
         }
-
-        public override string ToString()
-        {
-            return _value;
-        }
     }
 }
