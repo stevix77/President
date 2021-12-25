@@ -4,6 +4,8 @@
     using President.Domain.Games;
     using President.Domain.Players;
     using President.Infrastructure.Repositories;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Xunit;
 
@@ -13,7 +15,10 @@
         public async Task PlayerShouldJoinTheGame()
         {
             var game = new Game(new GameId("game1"));
-            await RunHandleWillAddPlayerToGame(new InMemoryGameRepository(game), new JoinGameCommand("player1", "game1"));
+            var repository = new InMemoryGameRepository(game);
+            var command = new JoinGameCommand("player1", "game1");
+            var handler = new JoinGameCommandHandler(repository, new InMemoryPlayerRepository(new Player(new PlayerId("player1"))));
+            await handler.Handle(command);
             Assert.NotEmpty(game.Players);
         }
 
@@ -21,20 +26,28 @@
         public async Task GameShouldNotAddPlayerUnknown()
         {
             var game = new Game(new GameId("game1"));
-            await HandlerCannotAddPlayerToGame(game);
+            var repository = new InMemoryGameRepository(game);
+            var command = new JoinGameCommand("", "game1");
+            var handler = new JoinGameCommandHandler(repository, new InMemoryPlayerRepository());
+            await Record.ExceptionAsync(() => handler.Handle(command));
             Assert.Empty(game.Players);
         }
+    }
 
-        private static async Task HandlerCannotAddPlayerToGame(Game game)
+    internal class InMemoryPlayerRepository : IPlayerRepository
+    {
+        private readonly List<Player> _players;
+
+        public InMemoryPlayerRepository(Player player = null)
         {
-            var handler = new JoinGameCommandHandler(new InMemoryGameRepository(game), new InMemoryPlayerRepository());
-            await Record.ExceptionAsync(() => handler.Handle(new JoinGameCommand("", "game1")));
+            _players = new List<Player>();
+            if (player != null)
+                _players.Add(player);
         }
 
-        private static async Task RunHandleWillAddPlayerToGame(InMemoryGameRepository repository, JoinGameCommand command)
+        public Task<Player> GetByIdAsync(PlayerId playerId)
         {
-            var handler = new JoinGameCommandHandler(repository, new InMemoryPlayerRepository(new Player(new PlayerId("player1"))));
-            await handler.Handle(command);
+            return Task.FromResult(_players.FirstOrDefault(x => x.PlayerId.Equals(playerId)));
         }
     }
 }
