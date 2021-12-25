@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace President.Domain.Games
 {
-    public sealed class Game : Entity
+    public class Game : Entity
     {
         private readonly GameId _gameId;
         private readonly bool _hasBegan;
@@ -44,9 +44,15 @@ namespace President.Domain.Games
                             gameState.StartingRequests);
         }
 
-        public GameId GameId { get => _gameId; }
-
         internal bool HasBegan() => _hasBegan;
+
+        public GameId GameId { get => _gameId; }
+        public IReadOnlyCollection<Player> Players { get => _players; }
+        public IEnumerable<PlayerId> AcceptedStartRequests 
+        { 
+            get => _startRequests.Where(x => x.Value).Select(x => x.Key);
+        }
+
         internal void AcceptRequestFromPlayer(Player player)
         {
             CheckRule(new PlayerMustBeInGameRule(player, this));
@@ -71,19 +77,6 @@ namespace President.Domain.Games
         {
             if (!_startRequests[player.PlayerId])
                 _startRequests[player.PlayerId] = true;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Game);
-        }
-
-        private bool Equals(Game game)
-        {
-            return EqualityComparer<GameId>.Default.Equals(_gameId, game._gameId) &&
-                   _hasBegan == game._hasBegan &&
-                   Enumerable.SequenceEqual(_players, game._players) &&
-                   Enumerable.SequenceEqual(_startRequests, game._startRequests);
         }
     }
 }

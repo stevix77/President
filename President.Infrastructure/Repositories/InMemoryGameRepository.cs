@@ -14,9 +14,9 @@ namespace President.Infrastructure.Repositories
             if (game != null)
                 _games.Add(game);
         }
-        public Task SaveAsync(Game game)
+        public Task SaveAsync(Game party)
         {
-            _games.Add(game);
+            _games.Add(party);
             return Task.CompletedTask;
         }
 
@@ -27,9 +27,9 @@ namespace President.Infrastructure.Repositories
 
         public int CountGames() => _games.Count;
 
-        public Task<Game> GetByIdAsync(GameId gameId)
+        public Task<Game> GetByIdAsync(GameId partyId)
         {
-            return Task.FromResult(_games.FirstOrDefault(x => x.GameId.Equals(gameId)));
+            return Task.FromResult(_games.FirstOrDefault(x => x.GameId.Equals(partyId)));
         }
     }
 }

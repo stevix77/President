@@ -5,7 +5,7 @@
 
     public interface IGameRepository
     {
-        Task SaveAsync(Game game);
-        Task<Game> GetByIdAsync(GameId gameId);
+        Task SaveAsync(Game party);
+        Task<Game> GetByIdAsync(GameId partyId);
     }
 }
