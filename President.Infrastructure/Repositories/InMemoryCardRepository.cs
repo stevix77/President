@@ -3,7 +3,9 @@
     using President.Domain.Cards;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using System.Linq;
     using static President.Domain.Cards.Card;
+    using System;
 
     public class InMemoryCardRepository : ICardRepository
     {
@@ -16,7 +18,7 @@
 
         public Task<Card[]> GetCards()
         {
-            return Task.FromResult(_cards.ToArray());
+            return Task.FromResult(_cards.OrderBy(x => new Random().Next()).ToArray());
         }
 
         private void InitCards()
