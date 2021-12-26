@@ -19,7 +19,8 @@
         public async Task GameStartedShouldDistributeCardsToPlayers(int countPlayers)
         {
             var players = GeneratePlayers(countPlayers);
-            var game = Game.FromState(new("g1", true, players.ToArray(), Array.Empty<PlayerId>()));
+            var game = Game.FromState(new("g1", true, players.ToArray(), Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             await DistributeCards(game, new DistributeCardsCommand("g1")).ConfigureAwait(false);
             AssertThatPlayersHaveEquitableCountCards(players);
         }

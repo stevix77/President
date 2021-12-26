@@ -22,8 +22,10 @@
         public async Task PlayerCanRequestToStartAGame()
         {
             var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[6]));
-            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId }));
+            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
+            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId },
+                                                            Array.Empty<int>(), "p3"));
             await HandleWillAcceptRequest(new InMemoryGameRepository(game),
                                           new InMemoryPlayerRepository(new List<Player> { player }));
             Assert.Equal(gameExpected, game);
@@ -34,8 +36,10 @@
         public async Task PlayerCannotRequestStartingGameWhenNotInGame()
         {
             var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6]));
-            var gameExpected = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6]));
+            var game = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
+            var gameExpected = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
             await HandleWillRejectRequest(new InMemoryGameRepository(game),
                                           new InMemoryPlayerRepository(new List<Player> { player }));
             Assert.Equal(gameExpected, game);
@@ -46,8 +50,10 @@
         public async Task PlayerCannotRequestStartingGameNotExisting()
         {
             var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6]));
-            var gameExpected = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6]));
+            var game = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
+            var gameExpected = Game.FromState(new("g1", false, Array.Empty<Player>(), new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
             await HandleWillRejectRequest(new InMemoryGameRepository(),
                                           new InMemoryPlayerRepository(new List<Player> { player }));
             Assert.Equal(gameExpected, game);
@@ -58,8 +64,10 @@
         public async Task PlayerUnknownCannotRequestStartingGame()
         {
             var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[6]));
-            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[6]));
+            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
+            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
             await HandleWillRejectRequest(new InMemoryGameRepository(game),
                                           new InMemoryPlayerRepository(Array.Empty<Player>()));
             Assert.Equal(gameExpected, game);
@@ -69,8 +77,10 @@
         public async Task PlayerCannotRequestStartingGameWhenGameIsStarted()
         {
             var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", true, new Player[] { player }, new PlayerId[6]));
-            var gameExpected = Game.FromState(new("g1", true, new Player[] { player }, new PlayerId[6]));
+            var game = Game.FromState(new("g1", true, new Player[] { player }, new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
+            var gameExpected = Game.FromState(new("g1", true, new Player[] { player }, new PlayerId[6],
+                                                            Array.Empty<int>(), "p3"));
             await HandleWillRejectRequest(new InMemoryGameRepository(game),
                                         new InMemoryPlayerRepository(new List<Player> { player }));
             Assert.Equal(gameExpected, game);
@@ -81,8 +91,10 @@
         public async Task PlayerCannotRequestStartingGameWhenHasAlreadyRequested()
         {
             var player = new Player(new("p1"));
-            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId }));
-            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId }));
+            var game = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId },
+                                                            Array.Empty<int>(), "p3"));
+            var gameExpected = Game.FromState(new("g1", false, new Player[] { player }, new PlayerId[] { player.PlayerId },
+                                                            Array.Empty<int>(), "p3"));
             await HandleWillRejectRequest(new InMemoryGameRepository(game),
                                         new InMemoryPlayerRepository(new List<Player> { player }));
             Assert.Equal(gameExpected, game);

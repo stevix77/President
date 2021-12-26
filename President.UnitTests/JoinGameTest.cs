@@ -20,11 +20,13 @@
             var game = Game.FromState(new GameState("game1",
                                                     false,
                                                     Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             var gameExpected = Game.FromState(new GameState("game1",
                                                     false,
                                                     new Player[] { player },
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             await RunHandleWillAddPlayerToGame(new InMemoryGameRepository(game),
                                                new JoinGameCommand("player1", "game1"),
                                                new InMemoryPlayerRepository(new List<Player> { player }));
@@ -39,11 +41,13 @@
             var game = Game.FromState(new GameState("game1",
                                                     false,
                                                     Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             var gameExpected = Game.FromState(new GameState("game1",
                                                     false,
                                                     Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game), 
                                                new InMemoryPlayerRepository(),
                                                new JoinGameCommand(null, "game1"));
@@ -56,11 +60,13 @@
             var game = Game.FromState(new GameState("game1",
                                                     true,
                                                     Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             var gameExpected = Game.FromState(new GameState("game1",
                                                     true,
                                                     Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             var player = new Player(new PlayerId("player1"));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(new List<Player> 
@@ -80,11 +86,13 @@
             var game = Game.FromState(new GameState("game1",
                                                     true,
                                                     players.ToArray(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             var gameExpected = Game.FromState(new GameState("game1",
                                                     true,
                                                     players.ToArray(),
-                                                    Array.Empty<PlayerId>()));
+                                                    Array.Empty<PlayerId>(),
+                                                            Array.Empty<int>(), "p3"));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(players),
                                                new JoinGameCommand("player1", "game1"));
