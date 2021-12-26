@@ -3,6 +3,7 @@ using President.Domain.Games;
 using President.Domain.Games.Events;
 using President.Domain.Players;
 using President.Infrastructure.Repositories;
+using President.UnitTests.Builders;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,19 +12,17 @@ namespace President.UnitTests
 {
     public class GameCreationTest
     {
+        private const string _gameId = "g1";
+
         [Fact]
         public async Task ShouldCreateGame()
         {
-            var expectedGame = Game.FromState(new GameState("game1",
-                                                            false,
-                                                            Array.Empty<Player>(),
-                                                            Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var expectedGame = Game.FromState(new GameStateBuilder().Build());
             var gameRepository = new InMemoryGameRepository();
-            await HandleWillCreateGame(new CreateGameCommand("game1"), gameRepository);
-            Assert.Equal(expectedGame, gameRepository.GetGame("game1"));
-            Assert.Contains(gameRepository.GetGame("game1").DomainEvents, 
-                        x => x.ToString() == new GameCreated(new("game1")).ToString());
+            await HandleWillCreateGame(new CreateGameCommand(_gameId), gameRepository);
+            Assert.Equal(expectedGame, gameRepository.GetGame(_gameId));
+            Assert.Contains(gameRepository.GetGame(_gameId).DomainEvents, 
+                        x => x.ToString() == new GameCreated(new(_gameId)).ToString());
         }
 
         [Fact]
@@ -37,16 +36,13 @@ namespace President.UnitTests
         [Fact]
         public async Task ShouldNotCreateGameWhenIdAlreadyExist()
         {
-            var expectedGame = Game.FromState(new GameState("game1", false, Array.Empty<Player>(), Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var expectedGame = Game.FromState(new GameStateBuilder().Build());
             var gameRepository = new InMemoryGameRepository(
-                                    Game.FromState(new GameState("game1",
-                                                                 false,
-                                                                 new Player[] { new Player(new("p1")) },
-                                                                 Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3")));
-            await HandleWillNotCreateGame(new CreateGameCommand("game1"), gameRepository);
-            Assert.NotEqual(expectedGame, gameRepository.GetGame("game1"));
+                                    Game.FromState(new GameStateBuilder()
+                                                        .WithPlayers(new[] { new Player(new("p1")) })
+                                                        .Build()));
+            await HandleWillNotCreateGame(new CreateGameCommand(_gameId), gameRepository);
+            Assert.NotEqual(expectedGame, gameRepository.GetGame(_gameId));
         }
 
         private static async Task HandleWillNotCreateGame(CreateGameCommand command, InMemoryGameRepository gameRepository)

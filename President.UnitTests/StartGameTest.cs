@@ -5,6 +5,7 @@
     using President.Domain.Games.Events;
     using President.Domain.Players;
     using President.Infrastructure.Repositories;
+    using President.UnitTests.Builders;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -25,11 +26,13 @@
         {
             var players = GeneratePlayers(6);
             var game = Game.FromState(
-                            new GameState("g1", false, players, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(
-                            new GameState("g1", true, players, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+                            new GameStateBuilder()
+                       .WithPlayers(players)
+                       .Build());
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(players)
+                       .Build());
             await HandleStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
             Assert.Contains(game.DomainEvents, x => x.ToString() == new GameStarted(new("g1")).ToString());
@@ -39,12 +42,12 @@
         public async Task GameNotStartWhenPlayersAreLessThan3()
         {
             var players = GeneratePlayers(2);
-            var game = Game.FromState(
-                            new GameState("g1", false, players, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(
-                            new GameState("g1", false, players, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(new GameStateBuilder()
+                       .WithPlayers(players)
+                       .Build());
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                       .WithPlayers(players)
+                       .Build());
             await HandleWillNotStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
             Assert.Empty(game.DomainEvents);
@@ -61,12 +64,15 @@
         public async Task GameCanStartWhenAllPlayersRequestsToStart()
         {
             var players = GeneratePlayers(3);
-            var game = Game.FromState(
-                            new GameState("g1", false, players, players.Select(x => x.PlayerId).ToArray(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(
-                            new GameState("g1", true, players, players.Select(x => x.PlayerId).ToArray(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(new GameStateBuilder()
+                       .WithPlayers(players)
+                       .WithRequesters(players.Select(x => x.PlayerId))
+                       .Build());
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(players)
+                       .WithRequesters(players.Select(x => x.PlayerId))
+                       .Build());
             await HandleStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
             Assert.Contains(game.DomainEvents, x => x.ToString() == new GameStarted(new("g1")).ToString());
@@ -77,11 +83,15 @@
         {
             var players = GeneratePlayers(3);
             var game = Game.FromState(
-                            new GameState("g1", false, players, players.Take(2).Select(x => x.PlayerId).ToArray(),
-                                                            Array.Empty<int>(), "p3"));
+                new GameStateBuilder()
+                       .WithPlayers(players)
+                       .WithRequesters(players.Take(2).Select(x => x.PlayerId))
+                       .Build());
             var gameExpected = Game.FromState(
-                            new GameState("g1", false, players, players.Take(2).Select(x => x.PlayerId).ToArray(),
-                                                            Array.Empty<int>(), "p3"));
+                            new GameStateBuilder()
+                                .WithPlayers(players)
+                                .WithRequesters(players.Take(2).Select(x => x.PlayerId))
+                                .Build());
             await HandleStartTheGame(new InMemoryGameRepository(game));
             Assert.Equal(gameExpected, game);
             Assert.Empty(game.DomainEvents);

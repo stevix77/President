@@ -4,6 +4,7 @@
     using President.Domain.Games;
     using President.Domain.Players;
     using President.Infrastructure.Repositories;
+    using President.UnitTests.Builders;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,14 +14,21 @@
 
     public class DistributeCardsTest
     {
+        private readonly GameStateBuilder _gameStateBuilder;
+        public DistributeCardsTest()
+        {
+            _gameStateBuilder = new GameStateBuilder();
+        }
+
         [InlineData(3)]
         [InlineData(5)]
         [Theory]
         public async Task GameStartedShouldDistributeCardsToPlayers(int countPlayers)
         {
             var players = GeneratePlayers(countPlayers);
-            var game = Game.FromState(new("g1", true, players.ToArray(), Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(_gameStateBuilder.WithHasBegan(true)
+                                                       .WithPlayers(players)
+                                                       .Build());
             await DistributeCards(game, new DistributeCardsCommand("g1")).ConfigureAwait(false);
             AssertThatPlayersHaveEquitableCountCards(players);
         }
