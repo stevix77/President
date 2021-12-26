@@ -4,6 +4,7 @@
     using President.Domain.Games;
     using President.Domain.Players;
     using President.Infrastructure.Repositories;
+    using President.UnitTests.Builders;
     using System;
     using System.Threading.Tasks;
     using Xunit;
@@ -14,16 +15,24 @@
         [Fact]
         public async Task PlayFirstOneCardShouldBeValid()
         {
-            var player = new Player(new("p1"));
+            var player = new Player(new("p3"));
             var gameExpected = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(), new int[] { 3 }, "p3")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new [] { player })
+                       .WithCards(new [] { 3 })
+                       .WithCurrentPlayer(new("p3"))
+                       .Build()
             );
             var game = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new("p3"))
+                       .Build()
             );
             var gameRepository = new InMemoryGameRepository(game);
-            var command = new PlayCardsCommand("g1", "p1", 3, 1);
+            var command = new PlayCardsCommand("g1", "p3", 3, 1);
             var handler = new PlayCardsCommandHandler(gameRepository, new InMemoryPlayerRepository(new[] { player }));
             await handler.Handle(command);
             Assert.Equal(gameExpected, game);
@@ -34,11 +43,19 @@
         {
             var player = new Player(new("p3"));
             var gameExpected = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(), new int[] { 3, 3 }, "p3")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCards(new [] { 3, 3 })
+                       .WithCurrentPlayer(new("p3"))
+                       .Build()
             );
             var game = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new("p3"))
+                       .Build()
             );
             var gameRepository = new InMemoryGameRepository(game);
             var command = new PlayCardsCommand("g1", "p3", 3, 2);
@@ -52,11 +69,18 @@
         {
             var player = new Player(new("p1"));
             var gameExpected = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(), Array.Empty<int>(), "p1")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new PlayerId("p1"))
+                       .Build()
             );
             var game = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p1")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new PlayerId("p1"))
+                       .Build()
             );
             var gameRepository = new InMemoryGameRepository(game);
             var command = new PlayCardsCommand("g1", "p1", 3, 5);
@@ -70,11 +94,18 @@
         {
             var player = new Player(new("p3"));
             var gameExpected = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(), Array.Empty<int>(), "p2")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new PlayerId("p1"))
+                       .Build()
             );
             var game = Game.FromState(
-                new GameState("g1", true, new Player[] { player }, Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p2")
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new PlayerId("p1"))
+                       .Build()
             );
             var gameRepository = new InMemoryGameRepository(game);
             var command = new PlayCardsCommand("g1", "p3", 3, 3);

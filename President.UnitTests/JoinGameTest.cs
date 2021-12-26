@@ -5,6 +5,7 @@
     using President.Domain.Players;
     using President.Domain.Players.Events;
     using President.Infrastructure.Repositories;
+    using President.UnitTests.Builders;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,18 +18,12 @@
         public async Task PlayerShouldJoinTheGame()
         {
             var player = new Player(new("player1"));
-            var game = Game.FromState(new GameState("game1",
-                                                    false,
-                                                    Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(new GameState("game1",
-                                                    false,
-                                                    new Player[] { player },
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(new GameStateBuilder().Build());
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                                                    .WithPlayers(new [] { player })
+                                                    .Build());
             await RunHandleWillAddPlayerToGame(new InMemoryGameRepository(game),
-                                               new JoinGameCommand("player1", "game1"),
+                                               new JoinGameCommand("player1", "g1"),
                                                new InMemoryPlayerRepository(new List<Player> { player }));
             Assert.Equal(gameExpected, game);
             Assert.Contains(player.DomainEvents, x => x.ToString() == 
@@ -38,42 +33,30 @@
         [Fact]
         public async Task GameShouldNotAddPlayerUnknown()
         {
-            var game = Game.FromState(new GameState("game1",
-                                                    false,
-                                                    Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(new GameState("game1",
-                                                    false,
-                                                    Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(new GameStateBuilder().Build());
+            var gameExpected = Game.FromState(new GameStateBuilder().Build());
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game), 
                                                new InMemoryPlayerRepository(),
-                                               new JoinGameCommand(null, "game1"));
+                                               new JoinGameCommand(null, "g1"));
             Assert.Equal(gameExpected, game);
         }
 
         [Fact]
         public async Task GameBeganCannotBeJoined()
         {
-            var game = Game.FromState(new GameState("game1",
-                                                    true,
-                                                    Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(new GameState("game1",
-                                                    true,
-                                                    Array.Empty<Player>(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(new GameStateBuilder()
+                                        .WithHasBegan(true)
+                                        .Build());
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                                        .WithHasBegan(true)
+                                        .Build());
             var player = new Player(new PlayerId("player1"));
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(new List<Player> 
                                                { 
                                                    player
                                                }),
-                                               new JoinGameCommand("player1", "game1"));
+                                               new JoinGameCommand("player1", "g1"));
             Assert.Equal(gameExpected, game);
             Assert.Empty(player.DomainEvents);
         }
@@ -83,19 +66,17 @@
         {
             var player = new Player(new("player1"));
             var players = new List<Player>(GeneratePlayers(6)) { player };
-            var game = Game.FromState(new GameState("game1",
-                                                    true,
-                                                    players.ToArray(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
-            var gameExpected = Game.FromState(new GameState("game1",
-                                                    true,
-                                                    players.ToArray(),
-                                                    Array.Empty<PlayerId>(),
-                                                            Array.Empty<int>(), "p3"));
+            var game = Game.FromState(new GameStateBuilder()
+                                        .WithHasBegan(true)
+                                        .WithPlayers(players)
+                                        .Build());
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                                        .WithHasBegan(true)
+                                        .WithPlayers(players)
+                                        .Build());
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(players),
-                                               new JoinGameCommand("player1", "game1"));
+                                               new JoinGameCommand("player1", "g1"));
             Assert.Equal(gameExpected, game);
             Assert.Empty(player.DomainEvents);
         }

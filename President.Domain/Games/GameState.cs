@@ -10,21 +10,21 @@ namespace President.Domain.Games
         private readonly Player[] _players;
         private readonly PlayerId[] _startingRequests;
         private readonly int[] _cards;
-        private readonly string _playerId;
+        private readonly PlayerId? _currentPlayer;
 
         public GameState(string gameId,
                          bool hasBegan,
                          Player[] players,
                          PlayerId[] startingRequests,
                          int[] cards,
-                         string playerId)
+                         PlayerId? playerId)
         {
             _gameId = gameId;
             _hasBegan = hasBegan;
             _players = players;
             _startingRequests = startingRequests;
             _cards = cards;
-            _playerId = playerId;
+            _currentPlayer = playerId;
         }
 
         public string GameId { get => _gameId; }
@@ -32,14 +32,6 @@ namespace President.Domain.Games
         public Player[] Players { get => _players; }
         public PlayerId[] StartingRequests { get => _startingRequests; }
         public int[] Cards { get => _cards; }
-        public PlayerId? PlayerId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_playerId))
-                    return null;
-                return new PlayerId(_playerId);
-            }
-        }
+        public PlayerId? PlayerId { get => _currentPlayer; }
     }
 }
