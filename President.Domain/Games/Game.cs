@@ -68,8 +68,9 @@
             for(var i = 0; i< _players.Count;i++)
             {
                 var number = randomNumberProvider.GetNextNumber(1, _players.Count);
-                var playerId = _players.ElementAt(number - 1).PlayerId;
-                _orders.Add(i, playerId);
+                var player = _players.ElementAt(number - 1);
+                _orders.Add(i, player.PlayerId);
+                player.SetOrder(i);
             }
             _currentPlayer = _orders[0];
         }

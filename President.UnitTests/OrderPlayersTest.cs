@@ -37,41 +37,12 @@ namespace President.UnitTests
             Assert.Equal(gameExpected, game);
         }
 
-        private List<Player> GeneratePlayers(int countPlayers)
+        private IEnumerable<Player> GeneratePlayers(int countPlayers)
         {
-            var players = new List<Player>();
             for(var i = 1; i<= countPlayers; i++)
             {
-                players.Add(new Player(new($"p{i}")));
+                yield return new Player(new($"p{i}"));
             }
-            return players;
         }
-
-        //[Fact]
-        //public async Task OrderingPlayersShouldSetCurrentPlayerToPlay()
-        //{
-        //    var game = Game.FromState(
-        //        new GameStateBuilder()
-        //                .WithHasBegan(true)
-        //                .WithPlayers(new[] { new Player(new("p1")),
-        //                                     new Player(new("p2")),
-        //                                     new Player(new("p3"))})
-        //                .Build()
-        //    );
-        //    var gameExpected = Game.FromState(
-        //        new GameStateBuilder()
-        //                .WithHasBegan(true)
-        //                .WithPlayers(new[] { new Player(new("p1")),
-        //                                     new Player(new("p2")),
-        //                                     new Player(new("p3"))})
-        //                .WithOrdering(new[] { new PlayerId("p2"), new PlayerId("p3"), new PlayerId("p1") })
-        //                .Build()
-        //    );
-        //    var gameRepository = new InMemoryGameRepository(game);
-        //    var command = new OrderPlayersCommand("g1");
-        //    var handler = new OrderPlayersCommandHandler(gameRepository, new InMemoryRandomProvider(2, 3, 1));
-        //    await handler.Handle(command);
-        //    Assert.Equal(gameExpected, game);
-        //}
     }
 }

@@ -3,14 +3,13 @@
     using President.Domain.Games;
     using President.Domain.Players.Events;
     using President.Domain.Players.Rules;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class Player : Entity
     {
         private readonly PlayerId _playerId;
         private readonly List<object> _cards;
+        private int _order;
 
         public Player(PlayerId playerId)
         {
@@ -19,9 +18,9 @@
         }
 
         public PlayerId PlayerId { get => _playerId; }
-        public int CountCards() 
+        public int CountCards()
         {
-            return _cards.Count;    
+            return _cards.Count;
         }
 
         internal void GetCard(object card)
@@ -55,6 +54,11 @@
         public override string ToString()
         {
             return _playerId.ToString();
+        }
+
+        internal void SetOrder(int i)
+        {
+            _order = i;
         }
     }
 }
