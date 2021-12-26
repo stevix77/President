@@ -31,11 +31,7 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            var gameRepository = new InMemoryGameRepository(game);
-            var command = new PlayCardsCommand("g1", "p3", 3, 1);
-            var handler = new PlayCardsCommandHandler(gameRepository, new InMemoryPlayerRepository(new[] { player }));
-            await handler.Handle(command);
-            Assert.Equal(gameExpected, game);
+            await AssertThatGameUpdated(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 1));
         }
 
         [Fact]
@@ -46,7 +42,7 @@
                 new GameStateBuilder()
                        .WithHasBegan(true)
                        .WithPlayers(new[] { player })
-                       .WithCards(new [] { 3, 3 })
+                       .WithCards(new[] { 3, 3 })
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
@@ -57,11 +53,7 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            var gameRepository = new InMemoryGameRepository(game);
-            var command = new PlayCardsCommand("g1", "p3", 3, 2);
-            var handler = new PlayCardsCommandHandler(gameRepository, new InMemoryPlayerRepository(new[] { player }));
-            await handler.Handle(command);
-            Assert.Equal(gameExpected, game);
+            await AssertThatGameUpdated(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 2));
         }
 
         [Fact]
@@ -82,11 +74,7 @@
                        .WithCurrentPlayer(new PlayerId("p1"))
                        .Build()
             );
-            var gameRepository = new InMemoryGameRepository(game);
-            var command = new PlayCardsCommand("g1", "p1", 3, 5);
-            var handler = new PlayCardsCommandHandler(gameRepository, new InMemoryPlayerRepository(new[] { player }));
-            var record = await Record.ExceptionAsync(() => handler.Handle(command));
-            Assert.Equal(gameExpected, game);
+            await AssertThatGameDoesNotChange(player, gameExpected, game, new PlayCardsCommand("g1", "p1", 3, 5));
         }
 
         [Fact]
@@ -107,10 +95,21 @@
                        .WithCurrentPlayer(new PlayerId("p1"))
                        .Build()
             );
-            var gameRepository = new InMemoryGameRepository(game);
-            var command = new PlayCardsCommand("g1", "p3", 3, 3);
-            var handler = new PlayCardsCommandHandler(gameRepository, new InMemoryPlayerRepository(new[] { player }));
-            var record = await Record.ExceptionAsync(() => handler.Handle(command));
+            await AssertThatGameDoesNotChange(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 3));
+        }
+
+        private static async Task AssertThatGameDoesNotChange(Player player, Game gameExpected, Game game, PlayCardsCommand command)
+        {
+            var handler = new PlayCardsCommandHandler(new InMemoryGameRepository(game), new InMemoryPlayerRepository(new[] { player }));
+            await Record.ExceptionAsync(() => handler.Handle(command));
+            Assert.Equal(gameExpected, game);
+        }
+
+        private static async Task AssertThatGameUpdated(Player player, Game gameExpected, Game game, PlayCardsCommand command)
+        {
+            var handler = new PlayCardsCommandHandler(new InMemoryGameRepository(game),
+                                                      new InMemoryPlayerRepository(new[] { player }));
+            await handler.Handle(command);
             Assert.Equal(gameExpected, game);
         }
     }
