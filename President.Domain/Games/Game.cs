@@ -14,6 +14,7 @@
         private readonly GameId _gameId;
         private bool _hasBegan;
         private PlayerId? _currentPlayer;
+        private readonly Dictionary<PlayerId, int> _orders;
         private readonly List<Player> _players;
         private readonly Dictionary<PlayerId, bool> _startRequests;
         private readonly List<int> _cards;
@@ -24,6 +25,7 @@
             _players = new List<Player>();
             _startRequests = new Dictionary<PlayerId, bool>();
             _cards = new List<int>();
+            _orders = new Dictionary<PlayerId, int>();
             AddDomainEvent(new GameCreated(gameId));
         }
 
@@ -32,7 +34,8 @@
                      Player[] players,
                      PlayerId[] startingRequests,
                      int[] cards,
-                     PlayerId? playerId)
+                     PlayerId? playerId,
+                     List<PlayerId> orders)
         {
             _gameId = gameId;
             _players = players.ToList();
@@ -44,15 +47,7 @@
                                     );
             _cards = cards.ToList();
             _currentPlayer = playerId;
-        }
-
-        internal void AddToDeck(int cardWeight, int countCards, PlayerId playerId)
-        {
-            if (playerId.Equals(_currentPlayer))
-            {
-                for (var i = 0; i < countCards; i++)
-                    _cards.Add(cardWeight);
-            }
+            _orders = new Dictionary<PlayerId, int>(orders.Select(x => new KeyValuePair<PlayerId, int>(x, orders.IndexOf(x))));
         }
 
         public static Game FromState(GameState gameState)
@@ -62,7 +57,18 @@
                             gameState.Players,
                             gameState.StartingRequests,
                             gameState.Cards,
-                            gameState.PlayerId);
+                            gameState.PlayerId,
+                            gameState.Orders);
+        }
+
+        public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
+        {
+            for(var i = 0; i< _players.Count;i++)
+            {
+                var number = randomNumberProvider.GetNextNumber(1, _players.Count);
+                var playerId = _players.ElementAt(number - 1).PlayerId;
+                _orders.Add(playerId, i);
+            }
         }
 
         public void Distribute(Card[] cards)
@@ -73,19 +79,7 @@
             }
         }
 
-        private void GiveCard(object card, Player player)
-        {
-            player.GetCard(card);
-        }
-
-        private Player GetPlayerWithLessCards()
-        {
-            var min = _players.Min(x => x.CountCards());
-            return _players.FirstOrDefault(x => x.CountCards() == min);
-        }
-
         public GameId GameId { get => _gameId; }
-        internal bool HasBegan() => _hasBegan;
 
         public void Start()
         {
@@ -107,11 +101,21 @@
             }
         }
 
+        internal bool HasBegan() => _hasBegan;
         internal bool IsRequestFromPlayerAccepted(Player player)
         {
             CheckRule(new PlayerMustBeInGameRule(player, this));
             CheckRule(new GameMustBeNotStartedRule(this));
             return AcceptRequestWhenNotRequestedYet(player);
+        }
+
+        internal void AddToDeck(int cardWeight, int countCards, PlayerId playerId)
+        {
+            if (playerId.Equals(_currentPlayer))
+            {
+                for (var i = 0; i < countCards; i++)
+                    _cards.Add(cardWeight);
+            }
         }
 
         internal bool ContainsPlayer(Player player)
@@ -124,6 +128,17 @@
             CheckRule(new GameMustBeNotStartedRule(this));
             _players.Add(player);
             _startRequests.Add(player.PlayerId, false);
+        }
+
+        private void GiveCard(object card, Player player)
+        {
+            player.GetCard(card);
+        }
+
+        private Player GetPlayerWithLessCards()
+        {
+            var min = _players.Min(x => x.CountCards());
+            return _players.FirstOrDefault(x => x.CountCards() == min);
         }
 
         private bool AcceptRequestWhenNotRequestedYet(Player player)
@@ -150,7 +165,7 @@
         public override string ToString()
         {
             return $"{_gameId} - {_hasBegan} - {string.Join(",", _players)} - {string.Join(",", _startRequests)}" +
-                $" - {string.Join(",", _cards)}";
+                $" - {string.Join(",", _cards)} - ordering: {string.Join(",", _orders)}";
         }
 
         public override int GetHashCode()
