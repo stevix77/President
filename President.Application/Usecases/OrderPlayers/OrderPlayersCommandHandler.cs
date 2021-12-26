@@ -8,18 +8,18 @@
     public class OrderPlayersCommandHandler
     {
         private readonly IGameRepository _gameRepository;
-        private readonly IRandomNumberProvider randomNumberProvider;
+        private readonly IRandomNumberProvider _randomNumberProvider;
 
         public OrderPlayersCommandHandler(IGameRepository gameRepository, IRandomNumberProvider randomNumberProvider)
         {
             _gameRepository = gameRepository;
-            this.randomNumberProvider = randomNumberProvider;
+            _randomNumberProvider = randomNumberProvider;
         }
 
         public async Task Handle(OrderPlayersCommand command)
         {
             var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId)).ConfigureAwait(false);
-            game.OrderPlayers(randomNumberProvider);
+            game.OrderPlayers(_randomNumberProvider);
             await _gameRepository.SaveAsync(game).ConfigureAwait(false);
         }
     }
