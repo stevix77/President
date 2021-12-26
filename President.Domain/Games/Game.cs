@@ -14,7 +14,7 @@
         private readonly GameId _gameId;
         private bool _hasBegan;
         private PlayerId? _currentPlayer;
-        private readonly Dictionary<PlayerId, int> _orders;
+        private readonly Dictionary<int, PlayerId> _orders;
         private readonly List<Player> _players;
         private readonly Dictionary<PlayerId, bool> _startRequests;
         private readonly List<int> _cards;
@@ -25,7 +25,7 @@
             _players = new List<Player>();
             _startRequests = new Dictionary<PlayerId, bool>();
             _cards = new List<int>();
-            _orders = new Dictionary<PlayerId, int>();
+            _orders = new Dictionary<int, PlayerId>();
             AddDomainEvent(new GameCreated(gameId));
         }
 
@@ -35,7 +35,7 @@
                      PlayerId[] startingRequests,
                      int[] cards,
                      PlayerId? playerId,
-                     List<PlayerId> orders)
+                     PlayerId[] orders)
         {
             _gameId = gameId;
             _players = players.ToList();
@@ -47,7 +47,9 @@
                                     );
             _cards = cards.ToList();
             _currentPlayer = playerId;
-            _orders = new Dictionary<PlayerId, int>(orders.Select(x => new KeyValuePair<PlayerId, int>(x, orders.IndexOf(x))));
+            _orders = new Dictionary<int, PlayerId>(
+                        orders.Select(x => new KeyValuePair<int, PlayerId>(
+                            orders.ToList().IndexOf(x), x)));
         }
 
         public static Game FromState(GameState gameState)
@@ -67,8 +69,9 @@
             {
                 var number = randomNumberProvider.GetNextNumber(1, _players.Count);
                 var playerId = _players.ElementAt(number - 1).PlayerId;
-                _orders.Add(playerId, i);
+                _orders.Add(i, playerId);
             }
+            _currentPlayer = _orders[0];
         }
 
         public void Distribute(Card[] cards)
@@ -165,7 +168,7 @@
         public override string ToString()
         {
             return $"{_gameId} - {_hasBegan} - {string.Join(",", _players)} - {string.Join(",", _startRequests)}" +
-                $" - {string.Join(",", _cards)} - ordering: {string.Join(",", _orders)}";
+                $" - {string.Join(",", _cards)} - ordering: {string.Join(",", _orders)} - currentPlayer: {_currentPlayer}";
         }
 
         public override int GetHashCode()

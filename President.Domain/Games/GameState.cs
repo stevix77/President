@@ -38,6 +38,6 @@ namespace President.Domain.Games
         public PlayerId[] StartingRequests { get => _startingRequests; }
         public int[] Cards { get => _cards; }
         public PlayerId? PlayerId { get => _currentPlayer; }
-        public List<PlayerId> Orders { get => _orders.ToList(); }
+        public PlayerId[] Orders { get => _orders; }
     }
 }
