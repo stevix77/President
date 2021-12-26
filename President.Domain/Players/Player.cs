@@ -2,6 +2,7 @@
 {
     using President.Domain.Games;
     using President.Domain.Players.Events;
+    using President.Domain.Players.Rules;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -33,6 +34,13 @@
             if (game.IsRequestFromPlayerAccepted(this))
                 AddDomainEvent(new StartRequested(_playerId, game.GameId));
         }
+
+        public void Play(int cardWeight, Game game, int countCards)
+        {
+            CheckRule(new Play4CardsMaximumRule(countCards));
+            game.AddToDeck(cardWeight, countCards, _playerId);
+        }
+
         public void Join(Game game)
         {
             game.AddPlayer(this);

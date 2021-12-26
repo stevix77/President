@@ -13,21 +13,26 @@
     {
         private readonly GameId _gameId;
         private bool _hasBegan;
+        private PlayerId? _currentPlayer;
         private readonly List<Player> _players;
         private readonly Dictionary<PlayerId, bool> _startRequests;
+        private readonly List<int> _cards;
 
         public Game(GameId gameId)
         {
             _gameId = gameId;
             _players = new List<Player>();
             _startRequests = new Dictionary<PlayerId, bool>();
+            _cards = new List<int>();
             AddDomainEvent(new GameCreated(gameId));
         }
 
         private Game(GameId gameId,
                      bool hasBegan,
                      Player[] players,
-                     PlayerId[] startingRequests)
+                     PlayerId[] startingRequests,
+                     int[] cards,
+                     PlayerId? playerId)
         {
             _gameId = gameId;
             _players = players.ToList();
@@ -37,6 +42,17 @@
                                                     x.PlayerId, startingRequests.Contains(x.PlayerId))
                                                    )
                                     );
+            _cards = cards.ToList();
+            _currentPlayer = playerId;
+        }
+
+        internal void AddToDeck(int cardWeight, int countCards, PlayerId playerId)
+        {
+            if (playerId.Equals(_currentPlayer))
+            {
+                for (var i = 0; i < countCards; i++)
+                    _cards.Add(cardWeight);
+            }
         }
 
         public static Game FromState(GameState gameState)
@@ -44,7 +60,9 @@
             return new Game(new GameId(gameState.GameId),
                             gameState.HasBegan,
                             gameState.Players,
-                            gameState.StartingRequests);
+                            gameState.StartingRequests,
+                            gameState.Cards,
+                            gameState.PlayerId);
         }
 
         public void Distribute(Card[] cards)
@@ -67,7 +85,6 @@
         }
 
         public GameId GameId { get => _gameId; }
-
         internal bool HasBegan() => _hasBegan;
 
         public void Start()
@@ -132,7 +149,8 @@
 
         public override string ToString()
         {
-            return $"{_gameId} - {_hasBegan} - {string.Join(",", _players)} - {string.Join(",", _startRequests)}";
+            return $"{_gameId} - {_hasBegan} - {string.Join(",", _players)} - {string.Join(",", _startRequests)}" +
+                $" - {string.Join(",", _cards)}";
         }
 
         public override int GetHashCode()
