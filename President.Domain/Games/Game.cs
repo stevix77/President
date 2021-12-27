@@ -17,6 +17,12 @@
         private PlayerId? _lastPlayer;
         private readonly Dictionary<int, PlayerId> _orders;
         private readonly List<Player> _players;
+
+        public void Skip()
+        {
+            SetNextPlayer();
+        }
+
         private readonly Dictionary<PlayerId, bool> _startRequests;
         private readonly List<Card> _cards;
 
