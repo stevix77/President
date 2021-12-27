@@ -93,16 +93,6 @@
                 _hasBegan = true;
                 AddDomainEvent(new GameStarted(_gameId));
             }
-
-            bool HasAllPlayersRequestToStart()
-            {
-                return _startRequests.All(x => x.Value);
-            }
-
-            bool IsFull()
-            {
-                return _players.Count == 6;
-            }
         }
 
         internal bool HasBegan() => _hasBegan;
@@ -119,7 +109,14 @@
             {
                 for (var i = 0; i < countCards; i++)
                     _cards.Add(cardWeight);
+                SetNextPlayer();
             }
+        }
+
+        private void SetNextPlayer()
+        {
+            var currentPlayer = _orders.FirstOrDefault(x => x.Value.Equals(_currentPlayer));
+            _currentPlayer = currentPlayer.Key == _players.Count - 1 ? _orders[0] : _orders[currentPlayer.Key + 1];
         }
 
         internal bool ContainsPlayer(Player player)
@@ -134,7 +131,7 @@
             _startRequests.Add(player.PlayerId, false);
         }
 
-        private void GiveCard(object card, Player player)
+        private void GiveCard(Card card, Player player)
         {
             player.GetCard(card);
         }
@@ -153,7 +150,17 @@
                 return true;
             }
             return false;
-            
+
+        }
+
+        private bool HasAllPlayersRequestToStart()
+        {
+            return _startRequests.All(x => x.Value);
+        }
+
+        private bool IsFull()
+        {
+            return _players.Count == 6;
         }
 
         public override bool Equals(object obj)

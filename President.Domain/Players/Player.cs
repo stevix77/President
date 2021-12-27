@@ -1,5 +1,6 @@
 ﻿namespace President.Domain.Players
 {
+    using President.Domain.Cards;
     using President.Domain.Games;
     using President.Domain.Players.Events;
     using President.Domain.Players.Rules;
@@ -8,13 +9,13 @@
     public class Player : Entity
     {
         private readonly PlayerId _playerId;
-        private readonly List<object> _cards;
+        private readonly List<Card> _cards;
         private int _order;
 
         public Player(PlayerId playerId)
         {
             _playerId = playerId;
-            _cards = new List<object>();
+            _cards = new List<Card>();
         }
 
         public PlayerId PlayerId { get => _playerId; }
@@ -23,7 +24,7 @@
             return _cards.Count;
         }
 
-        internal void GetCard(object card)
+        internal void GetCard(Card card)
         {
             _cards.Add(card);
         }
