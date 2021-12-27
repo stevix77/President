@@ -41,7 +41,7 @@ namespace President.UnitTests
         {
             for(var i = 1; i<= countPlayers; i++)
             {
-                yield return new Player(new($"p{i}"));
+                yield return Player.FromState(new PlayerStateBuilder($"p{i}").Build());
             }
         }
     }

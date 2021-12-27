@@ -22,7 +22,7 @@
         [Fact]
         public async Task PlayerCanRequestToStartAGame()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithPlayers(new[] { player })
@@ -40,7 +40,7 @@
         [Fact]
         public async Task PlayerCannotRequestStartingGameWhenNotInGame()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(new GameStateBuilder()
                        .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
@@ -54,7 +54,7 @@
         [Fact]
         public async Task PlayerCannotRequestStartingGameNotExisting()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(new GameStateBuilder()
                                             .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
@@ -68,7 +68,7 @@
         [Fact]
         public async Task PlayerUnknownCannotRequestStartingGame()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(new GameStateBuilder()
                        .WithPlayers(new[] { player })
                        .Build());
@@ -83,7 +83,7 @@
         [Fact]
         public async Task PlayerCannotRequestStartingGameWhenGameIsStarted()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(new GameStateBuilder()
                        .WithPlayers(new[] { player })
                        .WithHasBegan(true)
@@ -101,7 +101,7 @@
         [Fact]
         public async Task PlayerCannotRequestStartingGameWhenHasAlreadyRequested()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(new GameStateBuilder()
                        .WithPlayers(new[] { player })
                        .WithRequesters(new[] {player.PlayerId})

@@ -110,14 +110,10 @@
             await handler.Handle(_command);
         }
 
-        private Player[] GeneratePlayers(int nbPlayers)
+        private IEnumerable<Player> GeneratePlayers(int nbPlayers)
         {
-            var players = new List<Player>();
             for (var i = 0; i < nbPlayers; i++)
-            {
-                players.Add(new Player(new(i.ToString())));
-            }
-            return players.ToArray();
+                yield return Player.FromState(new PlayerStateBuilder($"p{i + 1}").Build());
         }
     }
 }
