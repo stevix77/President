@@ -1,7 +1,5 @@
-﻿using President.Domain.Players;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using President.Domain.Cards;
+using President.Domain.Players;
 
 namespace President.Domain.Games
 {
@@ -11,17 +9,19 @@ namespace President.Domain.Games
         private readonly bool _hasBegan;
         private readonly Player[] _players;
         private readonly PlayerId[] _startingRequests;
-        private readonly int[] _cards;
+        private readonly Card[] _cards;
         private readonly PlayerId? _currentPlayer;
         private readonly PlayerId[] _orders;
+        private readonly PlayerId? _lastPlayer;
 
         public GameState(string gameId,
                          bool hasBegan,
                          Player[] players,
                          PlayerId[] startingRequests,
-                         int[] cards,
+                         Card[] cards,
                          PlayerId? playerId,
-                         PlayerId[] orders)
+                         PlayerId[] orders,
+                         PlayerId? lastPlayer)
         {
             _gameId = gameId;
             _hasBegan = hasBegan;
@@ -30,14 +30,16 @@ namespace President.Domain.Games
             _cards = cards;
             _currentPlayer = playerId;
             _orders = orders;
+            _lastPlayer = lastPlayer;
         }
 
         public string GameId { get => _gameId; }
         public bool HasBegan { get => _hasBegan; }
         public Player[] Players { get => _players; }
         public PlayerId[] StartingRequests { get => _startingRequests; }
-        public int[] Cards { get => _cards; }
+        public Card[] Cards { get => _cards; }
         public PlayerId? PlayerId { get => _currentPlayer; }
         public PlayerId[] Orders { get => _orders; }
+        public PlayerId? LastPlayer { get => _lastPlayer; }
     }
 }
