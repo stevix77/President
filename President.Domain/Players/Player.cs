@@ -28,6 +28,12 @@
                               state.Cards);
         }
 
+        public void Skip(Game game)
+        {
+            CheckRule(new SkipFromThisTurnRule(_playerId, game));
+            game.SkipPlayer(_playerId);
+        }
+
         public PlayerId PlayerId { get => _playerId; }
         public int CountCards()
         {
@@ -52,7 +58,6 @@
             CheckRule(new PlayerMustContainsCardsRule(cards, _cards));
             game.AddToDeck(cards, _playerId);
             DropCards(cards);
-            AddDomainEvent(new CardsPlayed(_playerId, game.GameId));
         }
 
         private void DropCards(IEnumerable<Card> cards)

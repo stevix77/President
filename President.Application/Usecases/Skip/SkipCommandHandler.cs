@@ -17,7 +17,8 @@
         public async Task Handle(SkipCommand command)
         {
             var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId));
-            game.Skip();
+            var player = game.GetPlayer(new PlayerId(command.PlayerId));
+            player.Skip(game);
         }
     }
 }

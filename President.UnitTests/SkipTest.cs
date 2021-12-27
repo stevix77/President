@@ -17,7 +17,7 @@ namespace President.UnitTests
                                             .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p1").Build()),
                                                                 Player.FromState(new PlayerStateBuilder("p2").Build())})
                                             .WithCurrentPlayer(new("p2"))
-                                            .WithOrdering(new PlayerId[] { new("p1"), new("p2") })
+                                            .WithOrdering(new PlayerId[] { new("p2") })
                                             .Build());
             var actual = Game.FromState(new GameStateBuilder()
                                             .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p1").Build()),
@@ -31,5 +31,28 @@ namespace President.UnitTests
             await handler.Handle(command);
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public async Task CannotSkipWhenNotCurrentPlayer()
+        {
+            var expected = Game.FromState(new GameStateBuilder()
+                                            .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p1").Build()),
+                                                                Player.FromState(new PlayerStateBuilder("p2").Build())})
+                                            .WithCurrentPlayer(new("p2"))
+                                            .WithOrdering(new PlayerId[] { new("p1"), new("p2")})
+                                            .Build());
+            var actual = Game.FromState(new GameStateBuilder()
+                                            .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p1").Build()),
+                                                                Player.FromState(new PlayerStateBuilder("p2").Build())})
+                                            .WithCurrentPlayer(new("p2"))
+                                            .WithOrdering(new PlayerId[] { new("p1"), new("p2") })
+                                            .Build());
+            var gameRepository = new InMemoryGameRepository(actual);
+            var command = new SkipCommand("g1", "p1");
+            var handler = new SkipCommandHandler(gameRepository);
+            await Record.ExceptionAsync(() => handler.Handle(command));
+            Assert.Equal(expected, actual);
+        }
+
     }
 }
