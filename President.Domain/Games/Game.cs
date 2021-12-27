@@ -17,12 +17,6 @@
         private PlayerId? _lastPlayer;
         private readonly Dictionary<int, PlayerId> _orders;
         private readonly List<Player> _players;
-
-        public void Skip()
-        {
-            SetNextPlayer();
-        }
-
         private readonly Dictionary<PlayerId, bool> _startRequests;
         private readonly List<Card> _cards;
 
@@ -127,6 +121,23 @@
             SetLastPlayer(playerId);
             SetNextPlayer();
         }
+        internal void SkipPlayer(PlayerId _playerId)
+        {
+            SetNextPlayer();
+            RemoveFromOrder(_playerId);
+        }
+
+        private void RemoveFromOrder(PlayerId currentPlayer)
+        {
+            var orders = new Dictionary<int, PlayerId>(_orders);
+            _orders.Clear();
+            for (var i = 0; i < orders.Count; i++)
+            {
+                if (!orders[i].Equals(currentPlayer))
+                    _orders.Add(_orders.Count, orders[i]);
+            }
+        }
+
 
         private void SetLastPlayer(PlayerId playerId)
         {
@@ -154,6 +165,7 @@
         {
             var currentPlayer = _orders.FirstOrDefault(x => x.Value.Equals(_currentPlayer));
             _currentPlayer = currentPlayer.Key == _players.Count - 1 ? _orders[0] : _orders[currentPlayer.Key + 1];
+            AddDomainEvent(new CurrentPlayerChanged(_gameId, _currentPlayer.Value));
         }
 
         private Player GetPlayerWithLessCards()
