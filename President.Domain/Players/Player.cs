@@ -52,6 +52,7 @@
             CheckRule(new PlayerMustContainsCardsRule(cards, _cards));
             game.AddToDeck(cards, _playerId);
             DropCards(cards);
+            AddDomainEvent(new CardsPlayed(_playerId, game.GameId));
         }
 
         private void DropCards(IEnumerable<Card> cards)
