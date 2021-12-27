@@ -48,8 +48,11 @@
         public void Play(IEnumerable<Card> cards, Game game)
         {
             CheckRule(new Play4CardsMaximumRule(cards.Count()));
-            game.AddToDeck(cards, _playerId);
-            DropCards(cards);
+            if (cards.All(x => _cards.Contains(x)))
+            {
+                game.AddToDeck(cards, _playerId);
+                DropCards(cards);
+            }
         }
 
         private void DropCards(IEnumerable<Card> cards)

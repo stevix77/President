@@ -50,8 +50,7 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            await AssertThatGameUpdated(player,
-                                        gameExpected,
+            await AssertThatGameUpdated(gameExpected,
                                         game,
                                         new PlayCardsCommand("g1",
                                                              "p3",
@@ -61,7 +60,10 @@
         [Fact]
         public async Task PlayFirstTwoCardsShouldBeValid()
         {
-            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
+            var player = Player.FromState(new PlayerStateBuilder("p3")
+                                            .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                             new Card(3, "5", Card.Color.DIAMOND)})
+                                            .Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
@@ -79,8 +81,7 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            await AssertThatGameUpdated(player,
-                                        gameExpected,
+            await AssertThatGameUpdated(gameExpected,
                                         game,
                                         new PlayCardsCommand("g1", "p3", new Card[] { new Card(3, "5", Card.Color.CLUB),
                                                                                       new Card(3, "5", Card.Color.DIAMOND)}));
@@ -104,8 +105,7 @@
                        .WithCurrentPlayer(new PlayerId("p1"))
                        .Build()
             );
-            await AssertThatGameDoesNotChange(player,
-                                              gameExpected,
+            await AssertThatGameDoesNotChange(gameExpected,
                                               game,
                                               new PlayCardsCommand("g1",
                                                                    "p1",
@@ -134,8 +134,7 @@
                        .WithCurrentPlayer(new PlayerId("p1"))
                        .Build()
             );
-            await AssertThatGameDoesNotChange(player,
-                                              gameExpected,
+            await AssertThatGameDoesNotChange(gameExpected,
                                               game,
                                               new PlayCardsCommand("g1", "p3", new Card[] { new Card(3, "5", Card.Color.CLUB) }));
         }
@@ -143,7 +142,10 @@
         [Fact]
         public async Task WhenLastPlayerPlayCardShouldReturnToFirstPlayer()
         {
-            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
+            var player = Player.FromState(new PlayerStateBuilder("p3")
+                                            .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                              new Card(4, "6", Card.Color.CLUB)})
+                                            .Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
@@ -161,25 +163,48 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            await AssertThatGameUpdated(player,
-                                        gameExpected,
+            await AssertThatGameUpdated(gameExpected,
                                         game,
                                         new PlayCardsCommand("g1",
                                                              "p3",
                                                              new Card[] { new Card(3, "5", Card.Color.CLUB) }));
         }
 
-        private static async Task AssertThatGameDoesNotChange(Player player, Game gameExpected, Game game, PlayCardsCommand command)
+        [Fact]
+        public async Task PlayerWithNoCardCannotPlay()
         {
-            var handler = new PlayCardsCommandHandler(new InMemoryGameRepository(game), new InMemoryPlayerRepository(new[] { player }));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
+            var gameExpected = Game.FromState(
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new PlayerId("p1"))
+                       .Build()
+            );
+            var game = Game.FromState(
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { player })
+                       .WithCurrentPlayer(new PlayerId("p1"))
+                       .Build()
+            );
+            await AssertThatGameDoesNotChange(gameExpected,
+                                              game,
+                                              new PlayCardsCommand("g1",
+                                                                   "p1",
+                                                                   new Card[] { new Card(3, "5", Card.Color.CLUB)}));
+        }
+
+        private static async Task AssertThatGameDoesNotChange(Game gameExpected, Game game, PlayCardsCommand command)
+        {
+            var handler = new PlayCardsCommandHandler(new InMemoryGameRepository(game));
             await Record.ExceptionAsync(() => handler.Handle(command));
             Assert.Equal(gameExpected, game);
         }
 
-        private static async Task AssertThatGameUpdated(Player player, Game gameExpected, Game game, PlayCardsCommand command)
+        private static async Task AssertThatGameUpdated(Game gameExpected, Game game, PlayCardsCommand command)
         {
-            var handler = new PlayCardsCommandHandler(new InMemoryGameRepository(game),
-                                                      new InMemoryPlayerRepository(new[] { player }));
+            var handler = new PlayCardsCommandHandler(new InMemoryGameRepository(game));
             await handler.Handle(command);
             Assert.Equal(gameExpected, game);
         }
