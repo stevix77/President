@@ -33,9 +33,10 @@
                                                                         new Card(4, "6", Card.Color.CLUB)})
                                                     .WithOrder(1)
                                                     .Build()) })
-                       .WithCards(new [] { 3 })
+                       .WithCards(new [] { new Card(3, "5", Card.Color.CLUB) })
                        .WithCurrentPlayer(new("p2"))
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
+                       .WithLastPlayer(new PlayerId("p3"))
                        .Build()
             );
             var game = Game.FromState(
@@ -68,9 +69,10 @@
                 new GameStateBuilder()
                        .WithHasBegan(true)
                        .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
-                       .WithCards(new[] { 3, 3 })
+                       .WithCards(new[] { new Card(3, "5", Card.Color.CLUB), new Card(3, "5", Card.Color.DIAMOND) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p2"))
+                       .WithLastPlayer(new PlayerId("p3"))
                        .Build()
             );
             var game = Game.FromState(
@@ -150,9 +152,10 @@
                 new GameStateBuilder()
                        .WithHasBegan(true)
                        .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
-                       .WithCards(new[] { 3 })
+                       .WithCards(new[] { new Card(3, "5", Card.Color.CLUB) })
                        .WithCurrentPlayer(new("p2"))
                        .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
+                       .WithLastPlayer(new PlayerId("p3"))
                        .Build()
             );
             var game = Game.FromState(
@@ -193,6 +196,47 @@
                                               new PlayCardsCommand("g1",
                                                                    "p1",
                                                                    new Card[] { new Card(3, "5", Card.Color.CLUB)}));
+        }
+
+        [Fact]
+        public async Task PlayerCannotPlayWeakerCardsThanLasts()
+        {
+            var gameExpected = Game.FromState(
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p2")
+                                            .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                             new Card(3, "5", Card.Color.DIAMOND)})
+                                            .Build()), 
+                                            Player.FromState(new PlayerStateBuilder("p3")
+                                            .WithCards(new[]{ new Card(1, "3", Card.Color.CLUB),
+                                                        new Card(1, "3", Card.Color.DIAMOND)})
+                                            .Build()) })
+                       .WithCards(new[] { new Card(3, "5", Card.Color.CLUB) })
+                       .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
+                       .WithCurrentPlayer(new("p3"))
+                       .WithLastPlayer(new("p2"))
+                       .Build());
+            var game = Game.FromState(
+                new GameStateBuilder()
+                       .WithHasBegan(true)
+                       .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p2")
+                                            .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                             new Card(3, "5", Card.Color.DIAMOND)})
+                                            .Build()), Player.FromState(new PlayerStateBuilder("p3")
+                                            .WithCards(new[]{ new Card(1, "3", Card.Color.CLUB),
+                                                        new Card(1, "3", Card.Color.DIAMOND)})
+                                            .Build()) })
+                       .WithCards(new[] { new Card(3, "5", Card.Color.CLUB) })
+                       .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
+                       .WithCurrentPlayer(new("p3"))
+                       .WithLastPlayer(new("p2"))
+                       .Build());
+            await AssertThatGameDoesNotChange(gameExpected,
+                                              game,
+                                              new PlayCardsCommand("g1",
+                                                                   "p3",
+                                                                   new Card[] { new Card(1, "3", Card.Color.CLUB) }));
         }
 
         private static async Task AssertThatGameDoesNotChange(Game gameExpected, Game game, PlayCardsCommand command)

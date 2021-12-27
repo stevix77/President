@@ -1,5 +1,6 @@
 ﻿namespace President.UnitTests.Builders
 {
+    using President.Domain.Cards;
     using President.Domain.Games;
     using President.Domain.Players;
     using System;
@@ -13,8 +14,9 @@
         private Player[] _players;
         private PlayerId[] _requesters;
         private PlayerId? _currentPlayer;
-        private int[] _cardsWeight;
+        private Card[] _cards;
         private PlayerId[] _orders;
+        private PlayerId? _lastPlayer;
 
         internal GameStateBuilder()
         {
@@ -23,13 +25,13 @@
             _players = Array.Empty<Player>();
             _requesters = Array.Empty<PlayerId>();
             _currentPlayer = null;
-            _cardsWeight = Array.Empty<int>();
+            _cards = Array.Empty<Card>();
             _orders = Array.Empty<PlayerId>();
         }
 
-        internal GameStateBuilder WithCards(int[] cardsWeight)
+        internal GameStateBuilder WithCards(Card[] cards)
         {
-            _cardsWeight = cardsWeight;
+            _cards = cards;
             return this;
         }
 
@@ -39,9 +41,10 @@
                                 _hasBegan,
                                 _players,
                                 _requesters,
-                                _cardsWeight,
+                                _cards,
                                 _currentPlayer,
-                                _orders);
+                                _orders,
+                                _lastPlayer);
         }
 
         internal GameStateBuilder WithOrdering(PlayerId[] playerIds)
@@ -71,6 +74,12 @@
         internal GameStateBuilder WithRequesters(IEnumerable<PlayerId> requesters)
         {
             _requesters = requesters.ToArray();
+            return this;
+        }
+
+        internal GameStateBuilder WithLastPlayer(PlayerId playerId)
+        {
+            _lastPlayer = playerId;
             return this;
         }
     }
