@@ -15,6 +15,18 @@
 
         public int Weight { get => _weight; }
 
+        public override bool Equals(object obj)
+        {
+            return Equals((Card)obj);
+        }
+
+        private bool Equals(Card card)
+        {
+            return _weight == card._weight &&
+                   _name == card._name &&
+                   _color == card._color;
+        }
+
         public override string ToString()
         {
             return $"{_name}-{_color}, weight {_weight}";

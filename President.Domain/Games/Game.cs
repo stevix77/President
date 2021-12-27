@@ -17,6 +17,12 @@
         private readonly Dictionary<int, PlayerId> _orders;
         private readonly List<Player> _players;
         private readonly Dictionary<PlayerId, bool> _startRequests;
+
+        public Player GetPlayer(PlayerId playerId)
+        {
+            return _players.FirstOrDefault(x => x.PlayerId.Equals(playerId));
+        }
+
         private readonly List<int> _cards;
 
         public Game(GameId gameId)
