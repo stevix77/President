@@ -15,11 +15,11 @@
         [Fact]
         public async Task PlayFirstOneCardShouldBeValid()
         {
-            var player = new Player(new("p3"));
+            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new [] { player, new Player(new("p2")) })
+                       .WithPlayers(new [] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
                        .WithCards(new [] { 3 })
                        .WithCurrentPlayer(new("p2"))
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
@@ -28,7 +28,7 @@
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, new Player(new("p2")) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p3"))
                        .Build()
@@ -39,11 +39,11 @@
         [Fact]
         public async Task PlayFirstTwoCardsShouldBeValid()
         {
-            var player = new Player(new("p3"));
+            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, new Player(new("p2")) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
                        .WithCards(new[] { 3, 3 })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p2"))
@@ -52,7 +52,7 @@
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, new Player(new("p2")) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p3"))
                        .Build()
@@ -63,7 +63,7 @@
         [Fact]
         public async Task PlayerCannotPlayMoreThan4Cards()
         {
-            var player = new Player(new("p1"));
+            var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
@@ -84,7 +84,7 @@
         [Fact]
         public async Task PlayerCannotPlayWhenNotHisTurn()
         {
-            var player = new Player(new("p3"));
+            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
@@ -105,11 +105,11 @@
         [Fact]
         public async Task WhenLastPlayerPlayCardShouldReturnToFirstPlayer()
         {
-            var player = new Player(new("p3"));
+            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, new Player(new("p2")) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
                        .WithCards(new[] { 3 })
                        .WithCurrentPlayer(new("p2"))
                        .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
@@ -118,7 +118,7 @@
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, new Player(new("p2")) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
                        .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
                        .WithCurrentPlayer(new("p3"))
                        .Build()

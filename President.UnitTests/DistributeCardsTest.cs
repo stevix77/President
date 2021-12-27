@@ -47,7 +47,7 @@
         {
             var players = new List<Player>();
             for (var i = 0; i < countPlayers; i++)
-                players.Add(new Player(new($"p{i}")));
+                players.Add(Player.FromState(new PlayerStateBuilder($"p{i}").Build()));
             return players;
         }
 

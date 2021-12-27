@@ -5,6 +5,7 @@
     using President.Domain.Players.Events;
     using President.Domain.Players.Rules;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Player : Entity
     {
@@ -12,10 +13,18 @@
         private readonly List<Card> _cards;
         private int _order;
 
-        public Player(PlayerId playerId)
+        private Player(PlayerId playerId, int order, Card[] cards)
         {
             _playerId = playerId;
-            _cards = new List<Card>();
+            _cards = cards.ToList();
+            _order = order;
+        }
+
+        public static Player FromState(PlayerState state)
+        {
+            return new Player(state.PlayerId,
+                              state.Order,
+                              state.Cards);
         }
 
         public PlayerId PlayerId { get => _playerId; }

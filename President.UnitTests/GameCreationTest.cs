@@ -39,7 +39,7 @@ namespace President.UnitTests
             var expectedGame = Game.FromState(new GameStateBuilder().Build());
             var gameRepository = new InMemoryGameRepository(
                                     Game.FromState(new GameStateBuilder()
-                                                        .WithPlayers(new[] { new Player(new("p1")) })
+                                                        .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p1").Build()) })
                                                         .Build()));
             await HandleWillNotCreateGame(new CreateGameCommand(_gameId), gameRepository);
             Assert.NotEqual(expectedGame, gameRepository.GetGame(_gameId));

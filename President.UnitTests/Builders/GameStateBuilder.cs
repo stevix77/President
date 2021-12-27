@@ -8,12 +8,12 @@
 
     internal class GameStateBuilder
     {
-        private string _gameId;
+        private readonly string _gameId;
         private bool _hasBegan;
         private Player[] _players;
         private PlayerId[] _requesters;
         private PlayerId? _currentPlayer;
-        private int[]? _cardsWeight;
+        private int[] _cardsWeight;
         private PlayerId[] _orders;
 
         internal GameStateBuilder()

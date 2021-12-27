@@ -17,7 +17,7 @@
         [Fact]
         public async Task PlayerShouldJoinTheGame()
         {
-            var player = new Player(new("player1"));
+            var player = Player.FromState(new PlayerStateBuilder("player1").Build());
             var game = Game.FromState(new GameStateBuilder().Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
                                                     .WithPlayers(new [] { player })
@@ -50,7 +50,7 @@
             var gameExpected = Game.FromState(new GameStateBuilder()
                                         .WithHasBegan(true)
                                         .Build());
-            var player = new Player(new PlayerId("player1"));
+            var player = Player.FromState(new PlayerStateBuilder("player1").Build());
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
                                                new InMemoryPlayerRepository(new List<Player> 
                                                { 
@@ -64,7 +64,7 @@
         [Fact]
         public async Task GameWith6playersCannotBeJoined()
         {
-            var player = new Player(new("player1"));
+            var player = Player.FromState(new PlayerStateBuilder("player1").Build());
             var players = new List<Player>(GeneratePlayers(6)) { player };
             var game = Game.FromState(new GameStateBuilder()
                                         .WithHasBegan(true)
@@ -83,12 +83,8 @@
 
         private static IEnumerable<Player> GeneratePlayers(int nbPlayers)
         {
-            var players = new List<Player>();
             for(var i = 0; i < nbPlayers; i++)
-            {
-                players.Add(new Player(new PlayerId(i.ToString())));
-            }
-            return players;
+                yield return Player.FromState(new PlayerStateBuilder($"p{i+1}").Build());
         }
 
         private static async Task HandlerCannotAddPlayerToGame(InMemoryGameRepository gameRepository,
