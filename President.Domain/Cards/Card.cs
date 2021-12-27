@@ -13,6 +13,13 @@
             _color = color;
         }
 
+        public int Weight { get => _weight; }
+
+        public override string ToString()
+        {
+            return $"{_name}-{_color}, weight {_weight}";
+        }
+
         public enum Color
         {
             HEART,

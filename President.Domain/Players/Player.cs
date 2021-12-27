@@ -4,6 +4,7 @@
     using President.Domain.Games;
     using President.Domain.Players.Events;
     using President.Domain.Players.Rules;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -44,16 +45,27 @@
                 AddDomainEvent(new StartRequested(_playerId, game.GameId));
         }
 
-        public void Play(int cardWeight, Game game, int countCards)
+        public void Play(IEnumerable<Card> cards, Game game)
         {
-            CheckRule(new Play4CardsMaximumRule(countCards));
-            game.AddToDeck(cardWeight, countCards, _playerId);
+            CheckRule(new Play4CardsMaximumRule(cards.Count()));
+            game.AddToDeck(cards, _playerId);
+            DropCards(cards);
+        }
+
+        private void DropCards(IEnumerable<Card> cards)
+        {
+            _cards.RemoveAll(x => cards.Any(y => y.Equals(x)));
         }
 
         public void Join(Game game)
         {
             game.AddPlayer(this);
             AddDomainEvent(new GameJoined(_playerId, game.GameId));
+        }
+
+        internal void SetOrder(int i)
+        {
+            _order = i;
         }
 
         public override bool Equals(object obj)
@@ -63,12 +75,7 @@
 
         public override string ToString()
         {
-            return _playerId.ToString();
-        }
-
-        internal void SetOrder(int i)
-        {
-            _order = i;
+            return $"{_playerId} - order {_order} - cards {string.Join(",", _cards)}";
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace President.UnitTests
 {
     using President.Application.Usecases.PlayCards;
+    using President.Domain.Cards;
     using President.Domain.Games;
     using President.Domain.Players;
     using President.Infrastructure.Repositories;
@@ -15,11 +16,23 @@
         [Fact]
         public async Task PlayFirstOneCardShouldBeValid()
         {
-            var player = Player.FromState(new PlayerStateBuilder("p3").Build());
+            var player = Player.FromState(new PlayerStateBuilder("p3")
+                                            .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                                new Card(4, "6", Card.Color.CLUB)})
+                                            .WithOrder(0)
+                                            .Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new [] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
+                       .WithPlayers(new [] { Player.FromState(new PlayerStateBuilder("p3")
+                                            .WithCards(new[]{ new Card(4, "6", Card.Color.CLUB)})
+                                            .WithOrder(0)
+                                            .Build()), 
+                                    Player.FromState(new PlayerStateBuilder("p2")
+                                                    .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                                        new Card(4, "6", Card.Color.CLUB)})
+                                                    .WithOrder(1)
+                                                    .Build()) })
                        .WithCards(new [] { 3 })
                        .WithCurrentPlayer(new("p2"))
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
@@ -28,12 +41,21 @@
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2")
+                                                                            .WithCards(new[]{ new Card(3, "5", Card.Color.CLUB),
+                                                                                               new Card(4, "6", Card.Color.CLUB)})
+                                                                            .WithOrder(1)
+                                                                            .Build()) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            await AssertThatGameUpdated(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 1));
+            await AssertThatGameUpdated(player,
+                                        gameExpected,
+                                        game,
+                                        new PlayCardsCommand("g1",
+                                                             "p3",
+                                                             new Card[] { new Card(3, "5", Card.Color.CLUB) }));
         }
 
         [Fact]
@@ -57,7 +79,11 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            await AssertThatGameUpdated(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 2));
+            await AssertThatGameUpdated(player,
+                                        gameExpected,
+                                        game,
+                                        new PlayCardsCommand("g1", "p3", new Card[] { new Card(3, "5", Card.Color.CLUB),
+                                                                                      new Card(3, "5", Card.Color.DIAMOND)}));
         }
 
         [Fact]
@@ -78,7 +104,16 @@
                        .WithCurrentPlayer(new PlayerId("p1"))
                        .Build()
             );
-            await AssertThatGameDoesNotChange(player, gameExpected, game, new PlayCardsCommand("g1", "p1", 3, 5));
+            await AssertThatGameDoesNotChange(player,
+                                              gameExpected,
+                                              game,
+                                              new PlayCardsCommand("g1",
+                                                                   "p1",
+                                                                   new Card[] { new Card(3, "5", Card.Color.CLUB),
+                                                                                new Card(), 
+                                                                                new Card(),
+                                                                                new Card(),
+                                                                                new Card()}));
         }
 
         [Fact]
@@ -99,7 +134,10 @@
                        .WithCurrentPlayer(new PlayerId("p1"))
                        .Build()
             );
-            await AssertThatGameDoesNotChange(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 3));
+            await AssertThatGameDoesNotChange(player,
+                                              gameExpected,
+                                              game,
+                                              new PlayCardsCommand("g1", "p3", new Card[] { new Card(3, "5", Card.Color.CLUB) }));
         }
 
         [Fact]
@@ -123,7 +161,12 @@
                        .WithCurrentPlayer(new("p3"))
                        .Build()
             );
-            await AssertThatGameUpdated(player, gameExpected, game, new PlayCardsCommand("g1", "p3", 3, 1));
+            await AssertThatGameUpdated(player,
+                                        gameExpected,
+                                        game,
+                                        new PlayCardsCommand("g1",
+                                                             "p3",
+                                                             new Card[] { new Card(3, "5", Card.Color.CLUB) }));
         }
 
         private static async Task AssertThatGameDoesNotChange(Player player, Game gameExpected, Game game, PlayCardsCommand command)

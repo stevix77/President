@@ -25,7 +25,9 @@ namespace President.UnitTests
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                         .WithHasBegan(true)
-                        .WithPlayers(players)
+                        .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder($"p1").WithOrder(2).Build()),
+                                             Player.FromState(new PlayerStateBuilder($"p2").WithOrder(0).Build()),
+                                             Player.FromState(new PlayerStateBuilder($"p3").WithOrder(1).Build())})
                         .WithOrdering(new[] { new PlayerId("p2"), new PlayerId("p3"), new PlayerId("p1") })
                         .WithCurrentPlayer(new PlayerId("p2"))
                         .Build()

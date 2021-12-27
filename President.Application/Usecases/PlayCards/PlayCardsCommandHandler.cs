@@ -19,7 +19,7 @@ namespace President.Application.Usecases.PlayCards
         {
             var game = await _gameRepository.GetByIdAsync(new GameId(command.GameId));
             var player = await _playerRepository.GetByIdAsync(new PlayerId(command.PlayerId));
-            player.Play(command.CardWeight, game, command.CountCards);
+            player.Play(command.Cards, game);
             await _gameRepository.SaveAsync(game).ConfigureAwait(false);
         }
     }
