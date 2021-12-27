@@ -103,12 +103,12 @@
             return AcceptRequestWhenNotRequestedYet(player);
         }
 
-        internal void AddToDeck(int cardWeight, int countCards, PlayerId playerId)
+        internal void AddToDeck(IEnumerable<Card> cards, PlayerId playerId)
         {
             if (playerId.Equals(_currentPlayer))
             {
-                for (var i = 0; i < countCards; i++)
-                    _cards.Add(cardWeight);
+                for (var i = 0; i < cards.Count(); i++)
+                    _cards.Add(cards.ElementAt(i).Weight);
                 SetNextPlayer();
             }
         }
