@@ -11,6 +11,7 @@
 
     public sealed class Game : Entity
     {
+        private const int MAX_PLAYERS_AUTHORIZED = 6;
         private readonly GameId _gameId;
         private bool _hasBegan;
         private PlayerId? _currentPlayer;
@@ -124,19 +125,11 @@
         internal void SkipPlayer(PlayerId _playerId)
         {
             SetNextPlayer();
-            if (_players.Where(x => !x.PlayerId.Equals(_currentPlayer)).All(x => x.HasSkip))
+            if (HasOnePlayerRemaining())
             {
-                foreach(var item in _players)
-                {
-                    item.HasSkip = false;
-                }
+                StartNewTurn();
                 _lastPlayer = null;
             }
-        }
-
-        private void SetLastPlayer(PlayerId playerId)
-        {
-            _lastPlayer = playerId;
         }
 
         internal bool ContainsPlayer(Player player)
@@ -151,6 +144,22 @@
             _startRequests.Add(player.PlayerId, false);
         }
 
+        private void StartNewTurn()
+        {
+            foreach (var player in _players)
+                player.HasSkip = false;
+        }
+
+        private bool HasOnePlayerRemaining()
+        {
+            return _players.Where(x => !x.PlayerId.Equals(_currentPlayer)).All(x => x.HasSkip);
+        }
+
+        private void SetLastPlayer(PlayerId playerId)
+        {
+            _lastPlayer = playerId;
+        }
+
         private void GiveCard(Card card, Player player)
         {
             player.GetCard(card);
@@ -160,6 +169,8 @@
         {
             var currentPlayer = _orders.FirstOrDefault(x => x.Value.Equals(_currentPlayer));
             _currentPlayer = currentPlayer.Key == _orders.Count - 1 ? _orders[0] : _orders[currentPlayer.Key + 1];
+            if (GetPlayer(_currentPlayer.Value).HasSkip)
+                SetNextPlayer();
             AddDomainEvent(new CurrentPlayerChanged(_gameId, _currentPlayer.Value));
         }
 
@@ -187,7 +198,7 @@
 
         private bool IsFull()
         {
-            return _players.Count == 6;
+            return _players.Count == MAX_PLAYERS_AUTHORIZED;
         }
 
         public override bool Equals(object obj)
