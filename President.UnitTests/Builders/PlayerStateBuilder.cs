@@ -9,6 +9,7 @@ namespace President.UnitTests.Builders
         private readonly string _playerId;
         private int _order = 0;
         private Card[] _cards = Array.Empty<Card>();
+        private bool _hasSkip;
 
         internal PlayerStateBuilder(string playerId)
         {
@@ -17,12 +18,18 @@ namespace President.UnitTests.Builders
 
         internal PlayerState Build()
         {
-            return new PlayerState(new PlayerId(_playerId), _order, _cards);
+            return new PlayerState(new PlayerId(_playerId), _order, _cards, _hasSkip);
         }
 
         internal PlayerStateBuilder WithOrder(int order)
         {
             _order = order;
+            return this;
+        }
+
+        internal PlayerStateBuilder WithHasSkip(bool hasSkip)
+        {
+            _hasSkip = true;
             return this;
         }
 

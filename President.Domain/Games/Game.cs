@@ -124,20 +124,15 @@
         internal void SkipPlayer(PlayerId _playerId)
         {
             SetNextPlayer();
-            RemoveFromOrder(_playerId);
-        }
-
-        private void RemoveFromOrder(PlayerId currentPlayer)
-        {
-            var orders = new Dictionary<int, PlayerId>(_orders);
-            _orders.Clear();
-            for (var i = 0; i < orders.Count; i++)
+            if (_players.Where(x => !x.PlayerId.Equals(_currentPlayer)).All(x => x.HasSkip))
             {
-                if (!orders[i].Equals(currentPlayer))
-                    _orders.Add(_orders.Count, orders[i]);
+                foreach(var item in _players)
+                {
+                    item.HasSkip = false;
+                }
+                _lastPlayer = null;
             }
         }
-
 
         private void SetLastPlayer(PlayerId playerId)
         {
