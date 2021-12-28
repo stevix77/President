@@ -13,7 +13,7 @@
     {
         private const int MAX_PLAYERS_AUTHORIZED = 6;
         private readonly GameId _gameId;
-        private bool _hasBegan;
+        private bool _hasStarted;
         private PlayerId? _currentPlayer;
         private PlayerId? _lastPlayer;
         private readonly Dictionary<int, PlayerId> _orders;
@@ -42,7 +42,7 @@
         {
             _gameId = gameId;
             _players = players.ToList();
-            _hasBegan = hasBegan;
+            _hasStarted = hasBegan;
             _startRequests = new Dictionary<PlayerId, bool>(
                                     players.Select(x => new KeyValuePair<PlayerId, bool>(
                                                     x.PlayerId, startingRequests.Contains(x.PlayerId))
@@ -101,12 +101,12 @@
             CheckRule(new GameMustHaveMoreTwoPlayersRule(_players.Count));
             if (HasAllPlayersRequestToStart() || IsFull())
             {
-                _hasBegan = true;
+                _hasStarted = true;
                 AddDomainEvent(new GameStarted(_gameId));
             }
         }
 
-        internal bool HasBegan() => _hasBegan;
+        internal bool HasBegan() => _hasStarted;
         internal bool IsRequestFromPlayerAccepted(Player player)
         {
             CheckRule(new PlayerMustBeInGameRule(player, this));
@@ -208,13 +208,14 @@
 
         private bool Equals(Game game)
         {
-            return ToString() == game.ToString();
-        }
-
-        public override string ToString()
-        {
-            return $"{_gameId} - {_hasBegan} - {string.Join(",", _players)} - {string.Join(",", _startRequests)}" +
-                $" - last cards: {string.Join(",", _cards)} - ordering: {string.Join(",", _orders)} - currentPlayer: {_currentPlayer} - lastPlayer: {_lastPlayer}";
+            return game._currentPlayer.Equals(_currentPlayer) &&
+                    game._gameId.Equals(_gameId) &&
+                    game._hasStarted == _hasStarted &&
+                    game._lastPlayer.Equals(_lastPlayer) &&
+                    game._cards.SequenceEqual(_cards) &&
+                    game._players.SequenceEqual(_players) &&
+                    game._startRequests.SequenceEqual(_startRequests) &&
+                    game._orders.SequenceEqual(_orders);
         }
     }
 }

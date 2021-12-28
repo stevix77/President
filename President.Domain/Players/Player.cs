@@ -84,12 +84,15 @@
 
         public override bool Equals(object obj)
         {
-            return ToString() == obj.ToString();
+            return Equals(obj as Player);
         }
 
-        public override string ToString()
+        private bool Equals(Player player)
         {
-            return $"{_playerId} - order {_order} - cards {string.Join(",", _cards)} - hasSkip {_hasSkip}";
+            return _hasSkip == player._hasSkip &&
+                    _order == player._order &&
+                    _playerId.Equals(player._playerId) &&
+                    _cards.SequenceEqual(player._cards);
         }
     }
 }
