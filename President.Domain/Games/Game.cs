@@ -164,7 +164,7 @@
         private void SetNextPlayer()
         {
             var currentPlayer = _orders.FirstOrDefault(x => x.Value.Equals(_currentPlayer));
-            _currentPlayer = currentPlayer.Key == _players.Count - 1 ? _orders[0] : _orders[currentPlayer.Key + 1];
+            _currentPlayer = currentPlayer.Key == _orders.Count - 1 ? _orders[0] : _orders[currentPlayer.Key + 1];
             AddDomainEvent(new CurrentPlayerChanged(_gameId, _currentPlayer.Value));
         }
 
