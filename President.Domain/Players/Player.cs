@@ -13,28 +13,34 @@
         private readonly PlayerId _playerId;
         private readonly List<Card> _cards;
         private int _order;
+        private bool _hasSkip;
 
-        private Player(PlayerId playerId, int order, Card[] cards)
+        private Player(PlayerId playerId, int order, Card[] cards, bool hasSkip)
         {
             _playerId = playerId;
             _cards = cards.ToList();
             _order = order;
+            _hasSkip = hasSkip;
         }
 
         public static Player FromState(PlayerState state)
         {
             return new Player(state.PlayerId,
                               state.Order,
-                              state.Cards);
+                              state.Cards,
+                              state.HasSkip);
         }
 
         public void Skip(Game game)
         {
             CheckRule(new SkipFromThisTurnRule(_playerId, game));
+            _hasSkip = true;
             game.SkipPlayer(_playerId);
         }
 
         public PlayerId PlayerId { get => _playerId; }
+        public bool HasSkip { get => _hasSkip; internal set => _hasSkip = value; }
+
         public int CountCards()
         {
             return _cards.Count;
@@ -83,7 +89,7 @@
 
         public override string ToString()
         {
-            return $"{_playerId} - order {_order} - cards {string.Join(",", _cards)}";
+            return $"{_playerId} - order {_order} - cards {string.Join(",", _cards)} - hasSkip {_hasSkip}";
         }
     }
 }
