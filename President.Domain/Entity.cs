@@ -15,6 +15,6 @@ namespace President.Domain
         protected void CheckRule(IBusinessRule rule)
         {
             rule.Check();
-        }
+        } 
     }
 }
