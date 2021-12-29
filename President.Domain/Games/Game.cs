@@ -169,8 +169,11 @@
         {
             var currentPlayer = _orders.FirstOrDefault(x => x.Value.Equals(_currentPlayer));
             _currentPlayer = currentPlayer.Key == _orders.Count - 1 ? _orders[0] : _orders[currentPlayer.Key + 1];
-            if (GetPlayer(_currentPlayer.Value).HasSkip)
+            if (GetPlayer(_currentPlayer.Value).HasSkip || GetPlayer(_currentPlayer.Value).CountCards() == 0)
+            {
                 SetNextPlayer();
+                return;
+            }
             AddDomainEvent(new CurrentPlayerChanged(_gameId, _currentPlayer.Value));
         }
 

@@ -68,7 +68,7 @@
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").WithCards(new Card[] { new Card() }).Build()) })
                        .WithCards(new[] { new Card(3, "5", Card.Color.CLUB), new Card(3, "5", Card.Color.DIAMOND) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p2"))
@@ -78,7 +78,7 @@
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").WithCards(new Card[] { new Card() }).Build()) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
                        .WithCurrentPlayer(new("p3"))
                        .Build()
@@ -151,7 +151,7 @@
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").WithCards(new Card[] { new Card() }).Build()) })
                        .WithCards(new[] { new Card(3, "5", Card.Color.CLUB) })
                        .WithCurrentPlayer(new("p2"))
                        .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
@@ -161,7 +161,7 @@
             var game = Game.FromState(
                 new GameStateBuilder()
                        .WithHasBegan(true)
-                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").Build()) })
+                       .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").WithCards(new Card[] { new Card() }).Build()) })
                        .WithOrdering(new PlayerId[] { new("p2"), new("p3") })
                        .WithCurrentPlayer(new("p3"))
                        .Build()
