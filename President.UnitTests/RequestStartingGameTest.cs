@@ -86,11 +86,11 @@
             var player = Player.FromState(new PlayerStateBuilder("p1").Build());
             var game = Game.FromState(new GameStateBuilder()
                        .WithPlayers(new[] { player })
-                       .WithHasBegan(true)
+                       .WithHasStarted(true)
                        .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
                        .WithPlayers(new[] { player })
-                       .WithHasBegan(true)
+                       .WithHasStarted(true)
                        .Build());
             await HandleWillRejectRequest(new InMemoryGameRepository(game),
                                         new InMemoryPlayerRepository(new List<Player> { player }));

@@ -45,10 +45,10 @@
         public async Task GameBeganCannotBeJoined()
         {
             var game = Game.FromState(new GameStateBuilder()
-                                        .WithHasBegan(true)
+                                        .WithHasStarted(true)
                                         .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
-                                        .WithHasBegan(true)
+                                        .WithHasStarted(true)
                                         .Build());
             var player = Player.FromState(new PlayerStateBuilder("player1").Build());
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),
@@ -67,11 +67,11 @@
             var player = Player.FromState(new PlayerStateBuilder("player1").Build());
             var players = new List<Player>(GeneratePlayers(6)) { player };
             var game = Game.FromState(new GameStateBuilder()
-                                        .WithHasBegan(true)
+                                        .WithHasStarted(true)
                                         .WithPlayers(players)
                                         .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
-                                        .WithHasBegan(true)
+                                        .WithHasStarted(true)
                                         .WithPlayers(players)
                                         .Build());
             await HandlerCannotAddPlayerToGame(new InMemoryGameRepository(game),

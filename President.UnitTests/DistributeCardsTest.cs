@@ -26,7 +26,7 @@
         public async Task GameStartedShouldDistributeCardsToPlayers(int countPlayers)
         {
             var players = GeneratePlayers(countPlayers);
-            var game = Game.FromState(_gameStateBuilder.WithHasBegan(true)
+            var game = Game.FromState(_gameStateBuilder.WithHasStarted(true)
                                                        .WithPlayers(players)
                                                        .Build());
             await DistributeCards(game, new DistributeCardsCommand("g1")).ConfigureAwait(false);

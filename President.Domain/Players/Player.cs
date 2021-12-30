@@ -14,13 +14,15 @@
         private readonly List<Card> _cards;
         private int _order;
         private bool _hasSkip;
+        private int _rank;
 
-        private Player(PlayerId playerId, int order, Card[] cards, bool hasSkip)
+        private Player(PlayerId playerId, int order, Card[] cards, bool hasSkip, int rank)
         {
             _playerId = playerId;
             _cards = cards.ToList();
             _order = order;
             _hasSkip = hasSkip;
+            _rank = rank;
         }
 
         public static Player FromState(PlayerState state)
@@ -28,7 +30,8 @@
             return new Player(state.PlayerId,
                               state.Order,
                               state.Cards,
-                              state.HasSkip);
+                              state.HasSkip,
+                              state.Rank);
         }
 
         public void Skip(Game game)
@@ -40,6 +43,7 @@
 
         public PlayerId PlayerId { get => _playerId; }
         public bool HasSkip { get => _hasSkip; internal set => _hasSkip = value; }
+        public int Rank { get => _rank; set => _rank = value; }
 
         public int CountCards()
         {
@@ -64,6 +68,11 @@
             CheckRule(new PlayerMustContainsCardsRule(cards, _cards));
             game.AddToDeck(cards, _playerId);
             DropCards(cards);
+            if (!_cards.Any())
+            {
+                game.SetRanking(this);
+                game.CheckIsOver();
+            }
         }
 
         private void DropCards(IEnumerable<Card> cards)
@@ -82,6 +91,11 @@
             _order = i;
         }
 
+        internal void SetRanking(int rank)
+        {
+            _rank = rank;
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Player);
@@ -92,7 +106,8 @@
             return _hasSkip == player._hasSkip &&
                     _order == player._order &&
                     _playerId.Equals(player._playerId) &&
-                    _cards.SequenceEqual(player._cards);
+                    _cards.SequenceEqual(player._cards) &&
+                    _rank == player._rank;
         }
     }
 }
