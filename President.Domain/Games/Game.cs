@@ -68,6 +68,15 @@
                             gameState.LastPlayer);
         }
 
+        internal void CheckIsOver()
+        {
+            if (HasOnePlayerWithAnyCardRemaining())
+            {
+                SetLoser();
+                CloseGame();
+            }
+        }
+
         public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
         {
             for(var i = 0; i< _players.Count;i++)
@@ -114,6 +123,14 @@
             return AcceptRequestWhenNotRequestedYet(player);
         }
 
+        internal void SetRanking(Player player)
+        {
+            CheckRule(new PlayerMustHaveNoCardToGetRankingRule(player.CountCards()));
+            var nextRanking = _players.Count(x => x.CountCards() == 0);
+            player.SetRanking(nextRanking);
+
+        }
+
         internal void AddToDeck(IEnumerable<Card> cards, PlayerId playerId)
         {
             CheckRule(new CardsPlayedMustBeEqualsOrHigherRule(cards, _cards));
@@ -148,6 +165,21 @@
         {
             foreach (var player in _players)
                 player.HasSkip = false;
+        }
+
+        private void CloseGame()
+        {
+            _currentPlayer = null;
+        }
+
+        private bool HasOnePlayerWithAnyCardRemaining()
+        {
+            return _players.Count(x => x.CountCards() > 0) == 1;
+        }
+
+        private void SetLoser()
+        {
+            _players.Single(x => x.CountCards() > 0).SetRanking(_players.Count);
         }
 
         private bool HasOnePlayerRemaining()

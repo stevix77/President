@@ -59,7 +59,7 @@
             return this;
         }
 
-        internal GameStateBuilder WithHasBegan(bool hasBegan)
+        internal GameStateBuilder WithHasStarted(bool hasBegan)
         {
             _hasBegan = hasBegan;
             return this;

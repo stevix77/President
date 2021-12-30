@@ -30,7 +30,7 @@
                        .WithPlayers(players)
                        .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
-                       .WithHasBegan(true)
+                       .WithHasStarted(true)
                        .WithPlayers(players)
                        .Build());
             await HandleStartTheGame(new InMemoryGameRepository(game));
@@ -69,7 +69,7 @@
                        .WithRequesters(players.Select(x => x.PlayerId))
                        .Build());
             var gameExpected = Game.FromState(new GameStateBuilder()
-                       .WithHasBegan(true)
+                       .WithHasStarted(true)
                        .WithPlayers(players)
                        .WithRequesters(players.Select(x => x.PlayerId))
                        .Build());

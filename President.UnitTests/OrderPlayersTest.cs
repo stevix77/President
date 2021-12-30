@@ -18,13 +18,13 @@ namespace President.UnitTests
             var players = GeneratePlayers(3);
             var game = Game.FromState(
                 new GameStateBuilder()
-                        .WithHasBegan(true)
+                        .WithHasStarted(true)
                         .WithPlayers(players)
                         .Build()
             );
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
-                        .WithHasBegan(true)
+                        .WithHasStarted(true)
                         .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder($"p1").WithOrder(2).Build()),
                                              Player.FromState(new PlayerStateBuilder($"p2").WithOrder(0).Build()),
                                              Player.FromState(new PlayerStateBuilder($"p3").WithOrder(1).Build())})
