@@ -68,10 +68,15 @@
             CheckRule(new PlayerMustContainsCardsRule(cards, _cards));
             game.AddToDeck(cards, _playerId);
             DropCards(cards);
-            if (!_cards.Any())
+            if (HasNoCard())
             {
                 game.SetRanking(this);
                 game.CheckIsOver();
+            }
+
+            bool HasNoCard()
+            {
+                return _cards.Count == 0;
             }
         }
 
