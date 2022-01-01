@@ -68,14 +68,9 @@
                             gameState.LastPlayer);
         }
 
-        internal void CheckIsOver()
+        public Player GetAsshole()
         {
-            if (HasOnePlayerWithAnyCardRemaining())
-            {
-                SetLoser();
-                GameOver();
-                AddDomainEvent(new GameOver(_gameId));
-            }
+            return _players.First(x => x.IsAsshole(_players.Count));
         }
 
         public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
@@ -92,7 +87,8 @@
                 _currentPlayer = _orders[0];
                 return;
             }
-            _currentPlayer = GetAssHole().PlayerId;
+            _currentPlayer = GetAsshole().PlayerId;
+            AddDomainEvent(new CurrentPlayerChanged(_gameId, _currentPlayer.Value));
         }
 
         public void Distribute(Card[] cards)
@@ -145,7 +141,7 @@
             SetLastPlayer(playerId);
             SetNextPlayer();
         }
-        internal void SkipPlayer(PlayerId _playerId)
+        internal void SkipPlayer()
         {
             SetNextPlayer();
             if (HasOnePlayerRemaining())
@@ -167,6 +163,22 @@
             _startRequests.Add(player.PlayerId, false);
         }
 
+        internal void GiveCardsToPresident(IEnumerable<Card> cards)
+        {
+            var president = _players.First(x => x.Rank == 1);
+            president.AddCards(cards);
+        }
+
+        internal void CheckIsOver()
+        {
+            if (HasOnePlayerWithAnyCardRemaining())
+            {
+                SetLoser();
+                GameOver();
+                AddDomainEvent(new GameOver(_gameId));
+            }
+        }
+
         private void StartNewTurn()
         {
             foreach (var player in _players)
@@ -183,11 +195,6 @@
         private bool IsOrderingDone()
         {
             return _orders.Any();
-        }
-
-        private Player GetAssHole()
-        {
-            return _players.First(x => x.IsAsshole(_players.Count));
         }
 
         private bool HasOnePlayerWithAnyCardRemaining()
