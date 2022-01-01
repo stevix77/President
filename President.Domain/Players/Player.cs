@@ -43,16 +43,10 @@
 
         public PlayerId PlayerId { get => _playerId; }
         public bool HasSkip { get => _hasSkip; internal set => _hasSkip = value; }
-        public int Rank { get => _rank; set => _rank = value; }
 
         public int CountCards()
         {
             return _cards.Count;
-        }
-
-        internal void GetCard(Card card)
-        {
-            _cards.Add(card);
         }
 
         public void RequestStartingGame(Game game)
@@ -80,15 +74,15 @@
             }
         }
 
-        private void DropCards(IEnumerable<Card> cards)
-        {
-            _cards.RemoveAll(x => cards.Any(y => y.Equals(x)));
-        }
-
         public void Join(Game game)
         {
             game.AddPlayer(this);
             AddDomainEvent(new GameJoined(_playerId, game.GameId));
+        }
+
+        internal void Pickup(Card card)
+        {
+            _cards.Add(card);
         }
 
         internal void SetOrder(int i)
@@ -99,7 +93,11 @@
         internal void SetRanking(int rank)
         {
             _rank = rank;
+            if (IsWinner())
+                AddDomainEvent(new GameWon(_playerId));
         }
+
+        private bool IsWinner() => _rank == 1;
 
         public override bool Equals(object obj)
         {
@@ -113,6 +111,11 @@
                     _playerId.Equals(player._playerId) &&
                     _cards.SequenceEqual(player._cards) &&
                     _rank == player._rank;
+        }
+
+        private void DropCards(IEnumerable<Card> cards)
+        {
+            _cards.RemoveAll(x => cards.Any(y => y.Equals(x)));
         }
     }
 }

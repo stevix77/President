@@ -67,7 +67,7 @@
                                             .Build());
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
-                       .WithHasStarted(true)
+                       .WithHasStarted(false)
                        .WithPlayers(new[] { player, Player.FromState(new PlayerStateBuilder("p2").WithRank(2).WithCards(new Card[] { new Card() }).Build()) })
                        .WithCards(new[] { new Card(3, "5", Card.Color.CLUB), new Card(3, "5", Card.Color.DIAMOND) })
                        .WithOrdering(new PlayerId[] { new("p3"), new("p2") })
@@ -307,7 +307,7 @@
         {
             var gameExpected = Game.FromState(
                 new GameStateBuilder()
-                       .WithHasStarted(true)
+                       .WithHasStarted(false)
                        .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder("p1").WithRank(2).Build()),
                                             Player.FromState(new PlayerStateBuilder("p2").WithRank(1).Build()),
                                             Player.FromState(new PlayerStateBuilder("p3").WithRank(3).Build()),
