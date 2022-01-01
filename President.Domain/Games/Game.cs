@@ -80,14 +80,19 @@
 
         public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
         {
-            for(var i = 0; i< _players.Count;i++)
+            if (!IsOrderingDone())
             {
-                var number = randomNumberProvider.GetNextNumber(1, _players.Count);
-                var player = _players.ElementAt(number - 1);
-                _orders.Add(i, player.PlayerId);
-                player.SetOrder(i);
+                for (var i = 0; i < _players.Count; i++)
+                {
+                    var number = randomNumberProvider.GetNextNumber(1, _players.Count);
+                    var player = _players.ElementAt(number - 1);
+                    _orders.Add(i, player.PlayerId);
+                    player.SetOrder(i);
+                }
+                _currentPlayer = _orders[0];
+                return;
             }
-            _currentPlayer = _orders[0];
+            _currentPlayer = GetAssHole().PlayerId;
         }
 
         public void Distribute(Card[] cards)
@@ -173,6 +178,16 @@
             _currentPlayer = null;
             _hasStarted = false;
             _startRequests = new Dictionary<PlayerId, bool>(_startRequests.Select(x => new KeyValuePair<PlayerId, bool>(x.Key, false)));
+        }
+
+        private bool IsOrderingDone()
+        {
+            return _orders.Any();
+        }
+
+        private Player GetAssHole()
+        {
+            return _players.First(x => x.IsAsshole(_players.Count));
         }
 
         private bool HasOnePlayerWithAnyCardRemaining()
