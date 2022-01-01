@@ -117,5 +117,10 @@
         {
             _cards.RemoveAll(x => cards.Any(y => y.Equals(x)));
         }
+
+        internal bool IsAsshole(int count)
+        {
+            return _rank == count;
+        }
     }
 }
