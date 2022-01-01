@@ -25,6 +25,13 @@
             _rank = rank;
         }
 
+        public void GiveCards(IEnumerable<Card> cards, Player player)
+        {
+            var cardsToGive = new List<Card>(_cards.Where(x => cards.Contains(x)));
+            player.AddCards(cardsToGive);
+            _cards.RemoveAll(x => cards.Contains(x));
+        }
+
         public void GiveBestCards(Game game)
         {
             var cards = GetBestCards();

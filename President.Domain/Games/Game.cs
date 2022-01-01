@@ -73,6 +73,11 @@
             return _players.First(x => x.IsAsshole(_players.Count));
         }
 
+        public Player GetPresident()
+        {
+            return _players.Find(x => x.Rank == 1);
+        }
+
         public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
         {
             if (!IsOrderingDone())
