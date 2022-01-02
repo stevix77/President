@@ -39,11 +39,6 @@
             _cards.RemoveAll(x => cards.Contains(x));
         }
 
-        internal void AddCards(IEnumerable<Card> cards)
-        {
-            _cards.AddRange(cards);
-        }
-
         public static Player FromState(PlayerState state)
         {
             return new Player(state.PlayerId,
@@ -93,6 +88,11 @@
         {
             game.AddPlayer(this);
             AddDomainEvent(new GameJoined(_playerId, game.GameId));
+        }
+
+        internal void AddCards(IEnumerable<Card> cards)
+        {
+            _cards.AddRange(cards);
         }
 
         internal void Pickup(Card card)

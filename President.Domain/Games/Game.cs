@@ -17,25 +17,7 @@
         private PlayerId? _currentPlayer;
         private PlayerId? _lastPlayer;
         private readonly Dictionary<int, PlayerId> _orders;
-
-        public void GiveBestCardsToFirstPlayers()
-        {
-            var asshole = GetAsshole();
-            asshole.GiveBestCards(2, GetPlayerAtRank(1));
-            if (CountPlayer() > 3)
-            {
-                var viceAsshole = GetViceAsshole();
-                viceAsshole.GiveBestCards(1, GetPlayerAtRank(2));
-            }
-        }
-
         private readonly List<Player> _players;
-
-        public Player GetPlayerAtRank(int rank)
-        {
-            return _players.Find(x => x.Rank == rank);
-        }
-
         private Dictionary<PlayerId, bool> _startRequests;
         private readonly List<Card> _cards;
 
@@ -93,9 +75,9 @@
             return _players.First(x => x.IsAsshole(_players.Count));
         }
 
-        private Player GetViceAsshole()
+        public Player GetPlayerAtRank(int rank)
         {
-            return _players.First(x => x.IsAsshole(_players.Count - 1));
+            return _players.Find(x => x.Rank == rank);
         }
 
         public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
@@ -123,6 +105,17 @@
                 GiveCard(card, GetPlayerWithLessCards());
             }
             AddDomainEvent(new CardsDistributed(_gameId));
+        }
+
+        public void GiveBestCardsToFirstPlayers()
+        {
+            var asshole = GetAsshole();
+            asshole.GiveBestCards(2, GetPlayerAtRank(1));
+            if (CountPlayer() > 3)
+            {
+                var viceAsshole = GetViceAsshole();
+                viceAsshole.GiveBestCards(1, GetPlayerAtRank(2));
+            }
         }
 
         public Player GetPlayer(PlayerId playerId)
@@ -188,12 +181,6 @@
             _startRequests.Add(player.PlayerId, false);
         }
 
-        internal void GiveCardsToPresident(IEnumerable<Card> cards)
-        {
-            var president = _players.First(x => x.Rank == 1);
-            president.AddCards(cards);
-        }
-
         internal void CheckIsOver()
         {
             if (HasOnePlayerWithAnyCardRemaining())
@@ -202,6 +189,11 @@
                 GameOver();
                 AddDomainEvent(new GameOver(_gameId));
             }
+        }
+
+        private Player GetViceAsshole()
+        {
+            return _players.First(x => x.IsAsshole(_players.Count - 1));
         }
 
         private void StartNewTurn()
