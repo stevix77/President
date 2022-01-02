@@ -25,24 +25,6 @@
             _rank = rank;
         }
 
-        public void GiveBestCards(Game game)
-        {
-            var cards = GetBestCards();
-            game.GiveCardsToPresident(cards);
-        }
-
-        internal IEnumerable<Card> GetBestCards()
-        {
-            var cardsToGive = new List<Card>(_cards.OrderByDescending(x => x.Weight).Take(2));
-            _cards.RemoveAll(x => cardsToGive.Contains(x));
-            return cardsToGive;
-        }
-
-        internal void AddCards(IEnumerable<Card> cards)
-        {
-            _cards.AddRange(cards);
-        }
-
         public static Player FromState(PlayerState state)
         {
             return new Player(state.PlayerId,
@@ -56,12 +38,11 @@
         {
             CheckRule(new SkipFromThisTurnRule(_playerId, game));
             _hasSkip = true;
-            game.SkipPlayer();
+            game.SkipPlayer(_playerId);
         }
 
         public PlayerId PlayerId { get => _playerId; }
         public bool HasSkip { get => _hasSkip; internal set => _hasSkip = value; }
-        public int Rank { get => _rank; }
 
         public int CountCards()
         {
@@ -85,6 +66,11 @@
             {
                 game.SetRanking(this);
                 game.CheckIsOver();
+            }
+
+            bool HasNoCard()
+            {
+                return _cards.Count == 0;
             }
         }
 
@@ -111,17 +97,7 @@
                 AddDomainEvent(new GameWon(_playerId));
         }
 
-        internal bool IsAsshole(int count)
-        {
-            return _rank == count;
-        }
-
         private bool IsWinner() => _rank == 1;
-
-        bool HasNoCard()
-        {
-            return CountCards() == 0;
-        }
 
         public override bool Equals(object obj)
         {
@@ -140,6 +116,11 @@
         private void DropCards(IEnumerable<Card> cards)
         {
             _cards.RemoveAll(x => cards.Any(y => y.Equals(x)));
+        }
+
+        internal bool IsAsshole(int count)
+        {
+            return _rank == count;
         }
     }
 }
