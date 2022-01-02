@@ -27,16 +27,22 @@
 
         public void GiveCards(IEnumerable<Card> cards, Player player)
         {
-            var cardsToGive = _cards.Where(x => cards.Contains(x));
+            var cardsToGive = new List<Card>(_cards.Where(x => cards.Contains(x)));
             player.AddCards(cardsToGive);
             _cards.RemoveAll(x => cards.Contains(x));
         }
 
         public void GiveBestCards(Game game)
         {
-            var cards = _cards.OrderByDescending(x => x.Weight).Take(2);
+            var cards = GetBestCards();
             game.GiveCardsToPresident(cards);
-            _cards.RemoveAll(x => cards.Contains(x));
+        }
+
+        internal IEnumerable<Card> GetBestCards()
+        {
+            var cardsToGive = new List<Card>(_cards.OrderByDescending(x => x.Weight).Take(2));
+            _cards.RemoveAll(x => cardsToGive.Contains(x));
+            return cardsToGive;
         }
 
         internal void AddCards(IEnumerable<Card> cards)
