@@ -88,5 +88,64 @@ namespace President.UnitTests
             await handler.Handle(command);
             Assert.Equal(gameExpected, game);
         }
+
+        [Fact]
+        public async Task VicePresidentShouldGiveOneCardToViceAsshole()
+        {
+            var game = Game.FromState(new GameStateBuilder()
+                                        .WithHasStarted(true)
+                                        .WithPlayers(new Player[]
+                                        {
+                                            Player.FromState(new PlayerStateBuilder("p1")
+                                                                    .WithRank(3)
+                                                                    .Build()),
+                                            Player.FromState(new PlayerStateBuilder("p2")
+                                                                    .WithCards(new Card[]
+                                                                    {
+                                                                        new Card(13, "2", Card.Color.CLUB),
+                                                                        new Card(10, "Q", Card.Color.DIAMOND),
+                                                                        new Card(7, "9", Card.Color.DIAMOND)
+                                                                    })
+                                                                    .WithRank(2)
+                                                                    .Build()),
+                                            Player.FromState(new PlayerStateBuilder("p3")
+                                                                    .WithRank(1)
+                                                                    .Build()),
+                                            Player.FromState(new PlayerStateBuilder("p4")
+                                                                    .WithRank(4)
+                                                                    .Build())
+                                        })
+                                                  .Build());
+
+            var gameExpected = Game.FromState(new GameStateBuilder()
+                                        .WithHasStarted(true)
+                                        .WithPlayers(new Player[]
+                                        {
+                                            Player.FromState(new PlayerStateBuilder("p1")
+                                                                    .WithRank(3)
+                                                                    .WithCards(new Card[]{ new Card(7, "9", Card.Color.DIAMOND) })
+                                                                    .Build()),
+                                            Player.FromState(new PlayerStateBuilder("p2")
+                                                                    .WithCards(new Card[]
+                                                                    {
+                                                                        new Card(13, "2", Card.Color.CLUB),
+                                                                        new Card(10, "Q", Card.Color.DIAMOND)
+                                                                    })
+                                                                    .WithRank(2)
+                                                                    .Build()),
+                                            Player.FromState(new PlayerStateBuilder("p3")
+                                                                    .WithRank(1)
+                                                                    .Build()),
+                                            Player.FromState(new PlayerStateBuilder("p4")
+                                                                    .WithRank(4)
+                                                                    .Build())
+                                        })
+                                                  .Build());
+            var gameRepository = new InMemoryGameRepository(game);
+            var command = new GiveCardsCommand("g1", new Card[] { new Card(7, "9", Card.Color.DIAMOND) });
+            var handler = new GiveCardsCommandHandler(gameRepository);
+            await handler.Handle(command);
+            Assert.Equal(gameExpected, game);
+        }
     }
 }

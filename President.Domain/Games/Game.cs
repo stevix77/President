@@ -17,7 +17,25 @@
         private PlayerId? _currentPlayer;
         private PlayerId? _lastPlayer;
         private readonly Dictionary<int, PlayerId> _orders;
+
+        public void GiveBestCardsToFirstPlayers()
+        {
+            var asshole = GetAsshole();
+            asshole.GiveBestCards(2, GetPlayerAtRank(1));
+            if (CountPlayer() > 3)
+            {
+                var viceAsshole = GetViceAsshole();
+                viceAsshole.GiveBestCards(1, GetPlayerAtRank(2));
+            }
+        }
+
         private readonly List<Player> _players;
+
+        public Player GetPlayerAtRank(int rank)
+        {
+            return _players.Find(x => x.Rank == rank);
+        }
+
         private Dictionary<PlayerId, bool> _startRequests;
         private readonly List<Card> _cards;
 
@@ -68,14 +86,16 @@
                             gameState.LastPlayer);
         }
 
+        public int CountPlayer() => _players.Count;
+
         public Player GetAsshole()
         {
             return _players.First(x => x.IsAsshole(_players.Count));
         }
 
-        public Player GetPresident()
+        private Player GetViceAsshole()
         {
-            return _players.Find(x => x.Rank == 1);
+            return _players.First(x => x.IsAsshole(_players.Count - 1));
         }
 
         public void OrderPlayers(IRandomNumberProvider randomNumberProvider)
