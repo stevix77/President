@@ -16,7 +16,7 @@ namespace President.UnitTests
     public class GiveBestCardsTest
     {
         [Fact]
-        public async Task AssholeShouldGiveTwoBestCardsToPresident()
+        public async Task ShouldLoseBestCardsWhenPlayerIsAsshole()
         {
             var game = Game.FromState(new GameStateBuilder()
                                         .WithHasStarted(true)
