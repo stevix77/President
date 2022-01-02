@@ -39,36 +39,6 @@ namespace President.UnitTests
             Assert.Equal(gameExpected, game);
         }
 
-        [Fact]
-        public async Task ShouldNotOrderingPlayersWhenOrderingAlreadyDone()
-        {
-            var players = GeneratePlayers(3);
-            var game = Game.FromState(
-                new GameStateBuilder()
-                        .WithHasStarted(true)
-                        .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder($"p1").WithOrder(2).WithRank(3).Build()),
-                                             Player.FromState(new PlayerStateBuilder($"p2").WithOrder(0).WithRank(2).Build()),
-                                             Player.FromState(new PlayerStateBuilder($"p3").WithOrder(1).WithRank(1).Build())})
-                        .WithOrdering(new[] { new PlayerId("p2"), new PlayerId("p3"), new PlayerId("p1") })
-                        .Build()
-            );
-            var gameExpected = Game.FromState(
-                new GameStateBuilder()
-                        .WithHasStarted(true)
-                        .WithPlayers(new[] { Player.FromState(new PlayerStateBuilder($"p1").WithOrder(2).WithRank(3).Build()),
-                                             Player.FromState(new PlayerStateBuilder($"p2").WithOrder(0).WithRank(2).Build()),
-                                             Player.FromState(new PlayerStateBuilder($"p3").WithOrder(1).WithRank(1).Build())})
-                        .WithOrdering(new[] { new PlayerId("p2"), new PlayerId("p3"), new PlayerId("p1") })
-                        .WithCurrentPlayer(new PlayerId("p1"))
-                        .Build()
-            );
-            var gameRepository = new InMemoryGameRepository(game);
-            var command = new OrderPlayersCommand("g1");
-            var handler = new OrderPlayersCommandHandler(gameRepository, new InMemoryRandomProvider(1, 2, 3));
-            await handler.Handle(command);
-            Assert.Equal(gameExpected, game);
-        }
-
         private IEnumerable<Player> GeneratePlayers(int countPlayers)
         {
             for(var i = 1; i<= countPlayers; i++)

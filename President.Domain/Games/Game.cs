@@ -18,7 +18,7 @@
         private PlayerId? _lastPlayer;
         private readonly Dictionary<int, PlayerId> _orders;
         private readonly List<Player> _players;
-        private Dictionary<PlayerId, bool> _startRequests;
+        private readonly Dictionary<PlayerId, bool> _startRequests;
         private readonly List<Card> _cards;
 
         public Game(GameId gameId)
@@ -73,8 +73,7 @@
             if (HasOnePlayerWithAnyCardRemaining())
             {
                 SetLoser();
-                GameOver();
-                AddDomainEvent(new GameOver(_gameId));
+                CloseGame();
             }
         }
 
@@ -96,7 +95,6 @@
             {
                 GiveCard(card, GetPlayerWithLessCards());
             }
-            AddDomainEvent(new CardsDistributed(_gameId));
         }
 
         public Player GetPlayer(PlayerId playerId)
@@ -127,6 +125,7 @@
 
         internal void SetRanking(Player player)
         {
+            CheckRule(new PlayerMustHaveNoCardToGetRankingRule(player.CountCards()));
             var nextRanking = _players.Count(x => x.CountCards() == 0);
             player.SetRanking(nextRanking);
 
@@ -168,11 +167,9 @@
                 player.HasSkip = false;
         }
 
-        private void GameOver()
+        private void CloseGame()
         {
             _currentPlayer = null;
-            _hasStarted = false;
-            _startRequests = new Dictionary<PlayerId, bool>(_startRequests.Select(x => new KeyValuePair<PlayerId, bool>(x.Key, false)));
         }
 
         private bool HasOnePlayerWithAnyCardRemaining()
@@ -197,7 +194,7 @@
 
         private void GiveCard(Card card, Player player)
         {
-            player.Pickup(card);
+            player.GetCard(card);
         }
 
         private void SetNextPlayer()
