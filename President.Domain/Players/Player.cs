@@ -32,10 +32,10 @@
             _cards.RemoveAll(x => cards.Contains(x));
         }
 
-        public void GiveBestCards(Game game)
+        public void GiveBestCards(int countCardsToGive, Player player)
         {
-            var cards = _cards.OrderByDescending(x => x.Weight).Take(2);
-            game.GiveCardsToPresident(cards);
+            var cards = _cards.OrderByDescending(x => x.Weight).Take(countCardsToGive);
+            player.AddCards(cards);
             _cards.RemoveAll(x => cards.Contains(x));
         }
 
