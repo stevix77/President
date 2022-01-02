@@ -42,6 +42,7 @@ namespace President.UnitTests
         [Fact]
         public async Task ShouldNotOrderingPlayersWhenOrderingAlreadyDone()
         {
+            var players = GeneratePlayers(3);
             var game = Game.FromState(
                 new GameStateBuilder()
                         .WithHasStarted(true)
