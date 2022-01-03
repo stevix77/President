@@ -11,3 +11,9 @@
 /President.Domain/obj
 /President.Infrastructure/bin
 /President.Infrastructure/obj
+/Presentations/President.MobileApp/President.MobileApp/bin/Debug/netstandard2.0
+/Presentations/President.MobileApp/President.MobileApp/obj
+/Presentations/President.MobileApp/President.MobileApp.Android/obj
+/Presentations/President.MobileApp/President.MobileApp.iOS/obj
+/Presentations/President.MobileApp/President.MobileApp.UWP/bin/x86/Debug
+/Presentations/President.MobileApp/President.MobileApp.UWP/obj
